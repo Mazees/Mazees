@@ -39,4 +39,4 @@
 
 ## GitHub Analytics
 
-![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=FajarKim&theme=dark)
+![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=Mazees&theme=dark)
