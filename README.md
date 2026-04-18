@@ -8,11 +8,11 @@
 
 ## 👤 About me
 
-🎓 **Informatics Student** di UPN Veteran Jawa Timur**
-🚀 **Berfokus pada** Full-Stack Web & perancangan arsitektur sistem yang *scalable***
-🧠 **Ketertarikan khusus pada** AI Integration/Middleware Development**
-🛠️ **Senang meracik** *clean UI dashboards*, aplikasi lokal, & *smart automation tools***
-⚡ **Berkomitmen untuk** terus mengeksplorasi teknologi baru dan membangun solusi yang efisien**
+-🎓 **Informatics Student** di UPN Veteran Jawa Timur**
+-🚀 **Berfokus pada** Full-Stack Web & perancangan arsitektur sistem yang *scalable*
+-🧠 **Ketertarikan khusus pada** AI Integration/Middleware Development**
+-🛠️ **Senang meracik** *clean UI dashboards*, aplikasi lokal, & *smart automation tools*
+-⚡ **Berkomitmen untuk** terus mengeksplorasi teknologi baru dan membangun solusi yang efisien
 
 ---
 
