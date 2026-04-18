@@ -40,7 +40,5 @@
 ## GitHub Analytics
 
 <div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=Mazees&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Mada's GitHub Stats" />
+  <img src="https://gh-readme-profile.vercel.app/api?username=Mazees)](https://github.com/Mazees/github-readme-profile" alt="Mada's GitHub Stats" />
 </div>
-
-[![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=Mazees)](https://github.com/Mazees/github-readme-profile)
