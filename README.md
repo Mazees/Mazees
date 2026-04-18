@@ -9,8 +9,10 @@
 ## 👤 About me
 
 🎓 **Informatics Student** di UPN Veteran Jawa Timur  
-🚀 **Berfokus pada** Full-Stack Web & perancangan arsitektur sistem yang *scalable* 🧠 **Ketertarikan khusus pada** AI Integration/Middleware Development  
-🛠️ **Senang meracik** *clean UI dashboards*, aplikasi lokal, & *smart automation tools* ⚡ **Berkomitmen untuk** terus mengeksplorasi teknologi baru dan membangun solusi yang efisien  
+🚀 **Berfokus pada** Full-Stack Web & perancangan arsitektur sistem yang *scalable* 
+🧠 **Ketertarikan khusus pada** AI Integration/Middleware Development  
+🛠️ **Senang meracik** *clean UI dashboards*, aplikasi lokal, & *smart automation tools* |
+⚡ **Berkomitmen untuk** terus mengeksplorasi teknologi baru dan membangun solusi yang efisien  
 
 ---
 
@@ -40,3 +42,5 @@
 <div align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=Mazees&show_icons=true&theme=tokyonight&hide_border=true&bg_color=0D1117" alt="Mada's GitHub Stats" />
 </div>
+
+[![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=FajarKim)](https://github.com/FajarKim/github-readme-profile)
