@@ -40,3 +40,6 @@
 ## GitHub Analytics
 
 ![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=Mazees&theme=dark)
+
+## Contribution
+[![Ashutosh's github activity graph](https://github-readme-activity-graph.vercel.app/graph?username=Mazees&bg_color=000000&color=ffae00&line=ff9500&point=ffffff&area=true&hide_border=true)](https://github.com/ashutosh00710/github-readme-activity-graph)
