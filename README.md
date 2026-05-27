@@ -1,5 +1,6 @@
+<div align="center">
 # MAZEES | Mada Putra Adhadriyanto
-
+</div>
 <div align="center">
   <a href="https://github.com/Mazees">
     <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=22&pause=1000&color=3B82F6&center=true&vCenter=true&width=600&lines=Junior+Web+Developer;Informatics+Student+@+UPNVJT;AI+Application+Enthusiast" alt="Typing SVG" />
