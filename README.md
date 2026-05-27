@@ -45,9 +45,6 @@
 
 ---
 
-## Top Languages
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Mazees&layout=compact&hide_border=true&bg_color=0d1117&title_color=10b981&text_color=ffffff" alt="Bahasa Pemrograman" />
-
 ## GitHub Analytics
 
 ![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=Mazees&theme=dark)
