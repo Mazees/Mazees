@@ -45,8 +45,8 @@
 
 ---
 
-## Top Languange Programming
-[![Bahasa Pemrograman](https://github-readme-stats.vercel.app/api/top-langs/?username=Mazees&layout=compact&hide_border=true&bg_color=0d1117&title_color=10b981&text_color=ffffff)](https://github.com/Mazees)
+## Top Languages
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=Mazees&layout=compact&hide_border=true&bg_color=0d1117&title_color=10b981&text_color=ffffff" alt="Bahasa Pemrograman" />
 
 ## GitHub Analytics
 
