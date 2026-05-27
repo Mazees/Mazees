@@ -45,8 +45,8 @@
 
 ---
 
-## Top Languages
-<img src="https://metrics.lecoq.io/Mazees?template=classic&base=0&languages=1&languages.limit=6&languages.colors=github&config.timezone=Asia%2FJakarta" alt="Top Languages" />
+## Top Languange Programming
+[![Bahasa Pemrograman](https://metrics.lecoq.io/Mazees?template=classic&base=0&languages=1&languages.limit=6&languages.colors=github&config.timezone=Asia%2FJakarta)](https://github.com/Mazees)
 
 ## GitHub Analytics
 
