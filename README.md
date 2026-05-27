@@ -46,7 +46,7 @@
 ---
 
 ## Top Languange Programming
-[![Bahasa Pemrograman](https://github-readme-stats.vercel.app/api/top-langs/?username=USERNAME_KAMU&layout=compact&hide_border=true&bg_color=0d1117&title_color=10b981&text_color=ffffff)](https://github.com/USERNAME_KAMU)
+[![Bahasa Pemrograman](https://github-readme-stats.vercel.app/api/top-langs/?username=Mazees&layout=compact&hide_border=true&bg_color=0d1117&title_color=10b981&text_color=ffffff)](https://github.com/USERNAME_KAMU)
 
 ## GitHub Analytics
 
