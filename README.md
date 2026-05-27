@@ -1,5 +1,5 @@
 <div align="center">
-# MAZEES | Mada Putra Adhadriyanto
+<h1 align="center">MAZEES | Mada Putra Adhadriyanto</h1>
 </div>
 <div align="center">
   <a href="https://github.com/Mazees">
