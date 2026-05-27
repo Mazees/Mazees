@@ -45,6 +45,9 @@
 
 ---
 
+## Top Languages
+<img src="https://metrics.lecoq.io/Mazees?template=classic&base=0&languages=1&languages.limit=6&languages.colors=github&config.timezone=Asia%2FJakarta" alt="Top Languages" />
+
 ## GitHub Analytics
 
 ![GitHub Stats](https://gh-readme-profile.vercel.app/api?username=Mazees&theme=dark)
