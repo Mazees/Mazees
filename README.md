@@ -13,15 +13,10 @@ I'm **Mada Putra Adhadriyanto**, an Informatics student at **UPN "Veteran" Jawa 
 My main interests include:
 
 * **AI Integration & Agentic Systems**
-* **Full-Stack Web Development**
+* **Web App Development**
 * **LLM-powered Applications**
-* **Desktop Applications**
 * **Automation & Developer Tools**
 * **Clean and Functional UI/UX**
-
-I enjoy turning ideas into working products — from web applications and dashboards to AI agents and developer-focused tools.
-
----
 
 ## What I Build
 
