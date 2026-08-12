@@ -6,8 +6,6 @@
 
 </div>
 
----
-
 ## About Me
 
 I'm **Mada Putra Adhadriyanto**, an Informatics student at **UPN "Veteran" Jawa Timur** who enjoys building practical software and experimenting with AI-powered systems.
