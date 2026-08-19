@@ -155,17 +155,20 @@ export default function InteractiveTour() {
             {/* Top Bar: Identity & Meta */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-md bg-background border border-border text-textSecondary font-mono text-[11px]">
-                  <Bot className="w-3.5 h-3.5 text-primary" />
-                  <span className="font-semibold text-textPrimary">MARK</span>
-                  <span className="text-border">|</span>
-                  <span>AI Guide</span>
+                <div className="flex items-center space-x-2 px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 font-mono text-[11px] shadow-sm">
+                  <img
+                    src="/mark-icon.svg"
+                    alt="Mark"
+                    className="w-4 h-4 object-contain"
+                  />
+                  <span className="text-emerald-500/40">|</span>
+                  <span className="text-emerald-400/90 font-medium">Mark</span>
                 </div>
               </div>
 
               <div className="flex items-center space-x-3">
                 <span className="font-mono text-xs text-textSecondary">
-                  <span className="text-textPrimary font-semibold">
+                  <span className="text-emerald-400 font-semibold">
                     {currentStep.stepNumber}
                   </span>
                   <span className="text-textSecondary/50">
@@ -188,7 +191,7 @@ export default function InteractiveTour() {
             {/* Step Content */}
             <div className="space-y-1.5">
               <div className="flex items-center space-x-2">
-                <span className="font-mono text-xs font-semibold text-primary uppercase tracking-wider">
+                <span className="font-mono text-xs font-semibold text-emerald-400 uppercase tracking-wider">
                   {currentStep.category}
                 </span>
               </div>
@@ -210,9 +213,9 @@ export default function InteractiveTour() {
                   aria-label={`Go to stop ${i + 1}`}
                   className={`h-1 rounded-full transition-all duration-300 ${
                     i === currentStepIndex
-                      ? "bg-primary"
+                      ? "bg-emerald-500 shadow-sm shadow-emerald-500/50"
                       : i < currentStepIndex
-                        ? "bg-white/30"
+                        ? "bg-emerald-500/40"
                         : "bg-white/10 hover:bg-white/20"
                   }`}
                 />
@@ -243,7 +246,7 @@ export default function InteractiveTour() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-xs font-bold transition-all hover:scale-[1.02]"
+                className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-black text-xs font-bold transition-all hover:scale-[1.02] shadow-md shadow-emerald-500/20"
               >
                 <span>
                   {currentStepIndex === TOUR_STEPS.length - 1

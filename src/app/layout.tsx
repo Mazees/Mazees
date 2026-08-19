@@ -23,6 +23,8 @@ export const metadata: Metadata = {
 };
 
 import AosProvider from "@/components/AosProvider";
+import MarkFloatingTrigger from "@/components/agent/MarkFloatingTrigger";
+import MarkAgentOverlay from "@/components/agent/MarkAgentOverlay";
 
 export default function RootLayout({
   children,
@@ -30,11 +32,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth">
+    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${jakartaSans.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col antialiased selection:bg-primary/30 selection:text-primary-light text-textPrimary text-base`}
       >
-        <AosProvider>{children}</AosProvider>
+        <AosProvider>
+          {children}
+          <MarkFloatingTrigger />
+          <MarkAgentOverlay />
+        </AosProvider>
       </body>
     </html>
   );
