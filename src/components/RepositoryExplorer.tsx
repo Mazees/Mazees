@@ -69,7 +69,7 @@ export default function RepositoryExplorer({
   return (
     <section className="pb-24 pt-28 border-t border-border" id="repositories">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-12">
+        <div className="mb-12" data-aos="fade-up">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-border bg-surface/50 text-xs text-primary mb-3">
             <GitFork className="w-3.5 h-3.5" />
             <span>Open Source</span>
@@ -79,7 +79,7 @@ export default function RepositoryExplorer({
           </h2>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-4 mb-8">
+        <div className="flex flex-col lg:flex-row gap-4 mb-8" data-aos="fade-up" data-aos-delay="50">
           <div className="relative flex-grow">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-textSecondary" />
@@ -139,8 +139,14 @@ export default function RepositoryExplorer({
 
         {filteredAndSortedRepos.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAndSortedRepos.map((repo) => (
-              <RepositoryCard key={repo.id} repo={repo} />
+            {filteredAndSortedRepos.map((repo, index) => (
+              <div
+                key={repo.id}
+                data-aos="fade-up"
+                data-aos-delay={80 + (index % 3) * 60}
+              >
+                <RepositoryCard repo={repo} />
+              </div>
             ))}
           </div>
         ) : (

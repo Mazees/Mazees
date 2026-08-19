@@ -73,7 +73,7 @@ export default function ProjectShowcase({
       id="projects"
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-10">
+        <div className="mb-10" data-aos="fade-up">
           <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
             // Portfolio Showcase
           </span>
@@ -83,7 +83,7 @@ export default function ProjectShowcase({
         </div>
 
         {/* Project Type Filter Tabs */}
-        <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-border/80 pb-4">
+        <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-border/80 pb-4" data-aos="fade-up" data-aos-delay="50">
           {[
             { id: "all", label: "All Projects", count: typeCounts.all },
             { id: "client", label: "Client Work", count: typeCounts.client },
@@ -126,7 +126,7 @@ export default function ProjectShowcase({
         </div>
 
         {/* Controls: Search and Tech Stack */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-10">
+        <div className="flex flex-col sm:flex-row gap-4 mb-10" data-aos="fade-up" data-aos-delay="100">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-textSecondary" />
@@ -163,8 +163,14 @@ export default function ProjectShowcase({
         {/* Grid */}
         {filteredProjects.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+            {filteredProjects.map((project, index) => (
+              <div
+                key={project.id}
+                data-aos="fade-up"
+                data-aos-delay={80 + (index % 3) * 60}
+              >
+                <ProjectCard project={project} />
+              </div>
             ))}
           </div>
         ) : (

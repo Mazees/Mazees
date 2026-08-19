@@ -40,7 +40,7 @@ export default function LoginPage() {
         </Link>
       </div>
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md" data-aos="fade-up">
         {/* Logo / Header */}
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-textPrimary">

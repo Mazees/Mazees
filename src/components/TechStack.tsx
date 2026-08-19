@@ -39,7 +39,7 @@ export default function TechStack({
       id="skills"
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-12">
+        <div className="mb-12" data-aos="fade-up">
           <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
             // 04 · Stack & Tools
           </span>
@@ -49,14 +49,16 @@ export default function TechStack({
         </div>
 
         {groupedCategories.length === 0 ? (
-          <div className="p-8 text-center bg-surface border border-border rounded-xl text-textSecondary text-sm">
+          <div className="p-8 text-center bg-surface border border-border rounded-xl text-textSecondary text-sm" data-aos="fade-up">
             No tech stack items loaded yet.
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-6">
-            {groupedCategories.map((category) => (
+            {groupedCategories.map((category, index) => (
               <div
                 key={category.key}
+                data-aos="fade-up"
+                data-aos-delay={80 + (index % 2) * 80}
                 className="p-6 bg-surface border border-border rounded-xl hover:border-primary/30 transition-all group"
               >
                 <div className="flex items-center justify-between mb-4">

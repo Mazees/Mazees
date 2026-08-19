@@ -71,7 +71,7 @@ export default async function ProjectDetailPage({
       <div className="pt-28 pb-24 flex-1">
         <div className="max-w-5xl mx-auto px-6">
           {/* Header Navigation & Badges */}
-          <div className="space-y-6 mb-10">
+          <div className="space-y-6 mb-10" data-aos="fade-up">
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="/projects"
@@ -150,15 +150,17 @@ export default async function ProjectDetailPage({
           </div>
 
           {/* Project Media Gallery (Multiple Screenshots) */}
-          <ProjectGallery
-            title={project.title}
-            coverImage={project.image_url}
-            images={project.images}
-          />
+          <div data-aos="fade-up" data-aos-delay="100">
+            <ProjectGallery
+              title={project.title}
+              coverImage={project.image_url}
+              images={project.images}
+            />
+          </div>
 
           {/* Tech Stack Breakdown */}
           {project.tech_stacks && project.tech_stacks.length > 0 && (
-            <div className="p-8 rounded-3xl bg-surface border border-border mb-12 space-y-6">
+            <div className="p-8 rounded-3xl bg-surface border border-border mb-12 space-y-6" data-aos="fade-up">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
                   <Layers className="w-4 h-4" />
@@ -212,7 +214,7 @@ export default async function ProjectDetailPage({
 
           {/* Full Description with MarkdownRenderer */}
           {project.long_description && (
-            <div className="p-8 md:p-10 rounded-3xl bg-surface border border-border mb-16 space-y-6">
+            <div className="p-8 md:p-10 rounded-3xl bg-surface border border-border mb-16 space-y-6" data-aos="fade-up">
               <h2 className="text-xl font-bold text-textPrimary border-b border-border pb-4">
                 Project Overview & Implementation
               </h2>
@@ -222,7 +224,7 @@ export default async function ProjectDetailPage({
 
           {/* Other Projects */}
           {otherProjects.length > 0 && (
-            <div className="pt-12 border-t border-border space-y-8">
+            <div className="pt-12 border-t border-border space-y-8" data-aos="fade-up">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-textPrimary">
@@ -241,8 +243,14 @@ export default async function ProjectDetailPage({
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
-                {otherProjects.map((p) => (
-                  <ProjectCard key={p.id} project={p} />
+                {otherProjects.map((p, index) => (
+                  <div
+                    key={p.id}
+                    data-aos="fade-up"
+                    data-aos-delay={80 + (index % 3) * 60}
+                  >
+                    <ProjectCard project={p} />
+                  </div>
                 ))}
               </div>
             </div>

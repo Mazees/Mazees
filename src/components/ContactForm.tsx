@@ -104,7 +104,7 @@ export default function ContactForm() {
                     : "border-border bg-background/50 hover:bg-background text-textSecondary hover:text-textPrimary"
                 }`}
               >
-                <div className="flex items-center space-x-2 mb-1.5">
+                <div className="flex items-center space-x-2">
                   <Icon
                     className={`w-4 h-4 ${
                       isSelected ? "text-primary" : "text-textSecondary"

@@ -22,6 +22,8 @@ export const metadata: Metadata = {
     "Portfolio of Mada Putra Adhadriyanto (@Mazees), an Informatics student and Full-Stack AI Engineer exploring modern web development, intelligent AI applications, agentic workflows, and practical real-world AI implementations.",
 };
 
+import AosProvider from "@/components/AosProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +34,7 @@ export default function RootLayout({
       <body
         className={`${jakartaSans.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col antialiased selection:bg-primary/30 selection:text-primary-light text-textPrimary text-base`}
       >
-        {children}
+        <AosProvider>{children}</AosProvider>
       </body>
     </html>
   );

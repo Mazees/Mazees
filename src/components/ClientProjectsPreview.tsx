@@ -18,7 +18,7 @@ export default function ClientProjectsPreview({
       id="client-projects"
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6" data-aos="fade-up">
           <div>
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
               // 03 · Commercial Work
@@ -39,12 +39,21 @@ export default function ClientProjectsPreview({
 
         {clientProjects.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clientProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+            {clientProjects.map((project, index) => (
+              <div
+                key={project.id}
+                data-aos="fade-up"
+                data-aos-delay={80 + (index % 3) * 60}
+              >
+                <ProjectCard project={project} />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="p-12 text-center bg-surface/30 border border-dashed border-border rounded-2xl">
+          <div
+            className="p-12 text-center bg-surface/30 border border-dashed border-border rounded-2xl"
+            data-aos="fade-up"
+          >
             <h3 className="text-sm font-bold text-textPrimary mb-1">
               No Client Projects Published Yet
             </h3>

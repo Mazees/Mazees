@@ -51,7 +51,7 @@ export default function ContactPage() {
 
       <section className="pt-36 sm:pt-40 pb-24 px-6 max-w-6xl mx-auto w-full">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-12" data-aos="fade-up">
           <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
             // Connect & Collaborate
           </span>
@@ -66,12 +66,12 @@ export default function ContactPage() {
         {/* Content Grid */}
         <div className="grid lg:grid-cols-12 gap-8 items-start">
           {/* Main Column: Interactive Contact Form */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7" data-aos="fade-up" data-aos-delay="100">
             <ContactForm />
           </div>
 
           {/* Side Column: Direct Contacts & Status */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 space-y-6" data-aos="fade-up" data-aos-delay="150">
             {/* Quick Channel Links */}
             <div className="bg-surface border border-border rounded-2xl p-6 space-y-4">
               <h2 className="text-sm font-bold text-textPrimary font-mono uppercase tracking-wider">

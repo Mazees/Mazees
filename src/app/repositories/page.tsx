@@ -30,10 +30,12 @@ export default async function RepositoriesPage() {
       <div className="pt-28 pb-16 flex-1">
         <div className="max-w-7xl mx-auto px-6 mb-10 space-y-6">
           {/* GitHub Contributions in the Last Year */}
-          <GitHubContributionGraph username="Mazees" />
+          <div data-aos="fade-up">
+            <GitHubContributionGraph username="Mazees" />
+          </div>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4" data-aos="fade-up" data-aos-delay="100">
             <div className="p-5 rounded-2xl bg-surface border border-border shadow-sm">
               <span className="text-xs font-mono font-semibold uppercase tracking-wider text-textSecondary block">
                 Public Repos

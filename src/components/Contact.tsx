@@ -8,7 +8,7 @@ export default function Contact() {
       className="pb-24 pt-28 border-t border-border bg-surface/30"
       id="contact"
     >
-      <div className="max-w-4xl mx-auto px-6 text-center">
+      <div className="max-w-4xl mx-auto px-6 text-center" data-aos="fade-up">
         <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
           // 06 · Connect & Collaborate
         </span>
@@ -19,7 +19,7 @@ export default function Contact() {
           Have an idea, a project, or looking to discuss engineering opportunities? Drop a message via Email, WhatsApp, or Telegram.
         </p>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4" data-aos="fade-up" data-aos-delay="100">
           <Link
             href="/contact"
             className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-md shadow-primary/20 hover:scale-[1.02] group"
@@ -28,15 +28,6 @@ export default function Contact() {
             <span>Open Contact Form</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
-          <a
-            href="https://wa.me/6281234489008"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-surface hover:bg-background border border-border hover:border-primary text-textPrimary px-6 py-3.5 rounded-xl font-semibold transition-all hover:scale-[1.02]"
-          >
-            <FaWhatsapp className="w-4 h-4 text-emerald-500" />
-            <span>WhatsApp Direct</span>
-          </a>
         </div>
       </div>
     </section>

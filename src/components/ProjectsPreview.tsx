@@ -12,7 +12,7 @@ export default function ProjectsPreview({ projects }: { projects: Project[] }) {
       id="projects-preview"
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6" data-aos="fade-up">
           <div>
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
               // 02 · Highlights & AI Lab
@@ -33,12 +33,18 @@ export default function ProjectsPreview({ projects }: { projects: Project[] }) {
 
         {displayProjects.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+            {displayProjects.map((project, index) => (
+              <div
+                key={project.id}
+                data-aos="fade-up"
+                data-aos-delay={80 + (index % 3) * 60}
+              >
+                <ProjectCard project={project} />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-surface border border-dashed border-border rounded-2xl">
+          <div className="text-center py-16 bg-surface border border-dashed border-border rounded-2xl" data-aos="fade-up">
             <FolderKanban className="w-10 h-10 text-textSecondary mx-auto mb-3 opacity-40" />
             <p className="text-sm text-textSecondary">
               No projects showcased yet.
@@ -47,7 +53,7 @@ export default function ProjectsPreview({ projects }: { projects: Project[] }) {
         )}
 
         {projects.length > 6 && (
-          <div className="mt-12 text-center">
+          <div className="mt-12 text-center" data-aos="fade-up">
             <Link
               href="/projects"
               className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-all shadow-lg shadow-primary/20"

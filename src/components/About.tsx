@@ -31,7 +31,7 @@ export default function About() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-12 gap-16 items-start">
           {/* Left Column: Background & Bio */}
-          <div className="md:col-span-5 space-y-6">
+          <div className="md:col-span-5 space-y-6" data-aos="fade-up">
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block">
               // 01 · Who I Am
             </span>
@@ -55,13 +55,18 @@ export default function About() {
 
           {/* Right Column: Core Focus Areas */}
           <div className="md:col-span-7 space-y-6">
-            <span className="text-xs font-mono font-bold text-textSecondary tracking-widest uppercase block">
+            <span
+              className="text-xs font-mono font-bold text-textSecondary tracking-widest uppercase block"
+              data-aos="fade-up"
+            >
               // Core Focus Areas
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {focuses.map((focus, index) => (
                 <div
                   key={focus.title}
+                  data-aos="fade-up"
+                  data-aos-delay={100 + index * 50}
                   className="p-6 rounded-2xl bg-surface border border-border hover:border-primary/50 transition-all hover:translate-y-[-2px] shadow-sm flex flex-col justify-between"
                 >
                   <div className="space-y-2">

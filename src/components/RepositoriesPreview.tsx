@@ -26,7 +26,7 @@ export default function RepositoriesPreview({
       id="repositories-preview"
     >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6" data-aos="fade-up">
           <div>
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
               // 05 · Open Source
@@ -47,12 +47,18 @@ export default function RepositoriesPreview({
 
         {topRepos.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {topRepos.map((repo) => (
-              <RepositoryCard key={repo.id} repo={repo} />
+            {topRepos.map((repo, index) => (
+              <div
+                key={repo.id}
+                data-aos="fade-up"
+                data-aos-delay={80 + (index % 3) * 60}
+              >
+                <RepositoryCard repo={repo} />
+              </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-surface border border-dashed border-border rounded-2xl">
+          <div className="text-center py-16 bg-surface border border-dashed border-border rounded-2xl" data-aos="fade-up">
             <p className="text-sm text-textSecondary">
               No repositories available right now.
             </p>
