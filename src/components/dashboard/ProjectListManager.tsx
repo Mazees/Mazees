@@ -7,21 +7,23 @@ import {
   Search,
   Edit2,
   Trash2,
-  Eye,
   Star,
-  ExternalLink,
   FolderKanban,
   CheckCircle2,
   Clock,
   Loader2,
   Globe,
+  GripVertical,
+  ArrowUpDown,
 } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+import { Reorder } from "framer-motion";
 import type { Project } from "@/types/project";
 import {
   deleteProjectAction,
   toggleProjectPublishedAction,
   toggleProjectFeaturedAction,
+  reorderProjectsAction,
 } from "@/lib/actions/projects";
 
 export default function ProjectListManager({
@@ -37,6 +39,18 @@ export default function ProjectListManager({
   const [deleteConfirmProject, setDeleteConfirmProject] =
     useState<Project | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+
+  async function handleReorder(newOrder: Project[]) {
+    setProjects(newOrder);
+    setIsSavingOrder(true);
+    const orderedIds = newOrder.map((p) => p.id);
+    const res = await reorderProjectsAction(orderedIds);
+    if (!res.success) {
+      alert(res.error || "Failed to update project order");
+    }
+    setIsSavingOrder(false);
+  }
 
   async function handleTogglePublished(project: Project) {
     setLoadingId(project.id);
@@ -86,6 +100,8 @@ export default function ProjectListManager({
     setLoadingId(null);
   }
 
+  const isDragEnabled = filterStatus === "all" && search.trim() === "";
+
   const filtered = projects.filter((p) => {
     const matchesSearch =
       p.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -98,17 +114,188 @@ export default function ProjectListManager({
     return matchesSearch;
   });
 
+  const renderProjectRow = (project: Project, canDrag = false) => {
+    const isWorking = loadingId === project.id;
+    return (
+      <div className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-background/40 transition-colors bg-surface">
+        <div className="flex items-start sm:items-center space-x-3 min-w-0 flex-1">
+          {/* Drag Handle */}
+          {canDrag && (
+            <div
+              className="cursor-grab active:cursor-grabbing p-1.5 rounded-lg hover:bg-background text-textSecondary/50 hover:text-textPrimary transition-colors shrink-0 touch-none"
+              title="Drag to reorder"
+            >
+              <GripVertical className="w-4 h-4" />
+            </div>
+          )}
+
+          {project.image_url ? (
+            <img
+              src={project.image_url}
+              alt={project.title}
+              className="w-16 h-16 sm:w-20 sm:h-14 rounded-xl object-cover border border-border shrink-0 bg-background"
+            />
+          ) : (
+            <div className="w-16 h-16 sm:w-20 sm:h-14 rounded-xl bg-background border border-border flex items-center justify-center text-primary shrink-0">
+              <FolderKanban className="w-6 h-6 opacity-80" />
+            </div>
+          )}
+
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-base font-bold text-textPrimary truncate">
+                {project.title}
+              </h3>
+              {project.is_featured && (
+                <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-[10px] font-medium flex items-center space-x-1">
+                  <Star className="w-2.5 h-2.5 fill-yellow-400" />
+                  <span>Featured</span>
+                </span>
+              )}
+              <span className="text-[11px] font-mono text-textSecondary">
+                /{project.slug}
+              </span>
+            </div>
+
+            {project.description && (
+              <p className="text-xs text-textSecondary line-clamp-1">
+                {project.description}
+              </p>
+            )}
+
+            {/* Tech stack tags */}
+            {project.tech_stacks && project.tech_stacks.length > 0 && (
+              <div className="flex flex-wrap gap-1 pt-1">
+                {project.tech_stacks.map((t) => (
+                  <span
+                    key={t.id}
+                    className="px-2 py-0.5 rounded-md bg-background text-[10px] text-textSecondary border border-border/80"
+                  >
+                    {t.name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Actions & Toggles */}
+        <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 shrink-0">
+          <div className="flex items-center space-x-2">
+            {/* Featured button */}
+            <button
+              type="button"
+              onClick={() => handleToggleFeatured(project)}
+              disabled={isWorking}
+              className={`p-2 rounded-xl text-xs border transition-all ${
+                project.is_featured
+                  ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
+                  : "bg-background text-textSecondary border-border hover:text-textPrimary"
+              }`}
+              title={
+                project.is_featured
+                  ? "Remove from featured"
+                  : "Mark as featured"
+              }
+            >
+              <Star
+                className={`w-4 h-4 ${
+                  project.is_featured ? "fill-yellow-400" : ""
+                }`}
+              />
+            </button>
+
+            {/* Published button */}
+            <button
+              type="button"
+              onClick={() => handleTogglePublished(project)}
+              disabled={isWorking}
+              className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center space-x-1.5 transition-all ${
+                project.is_published
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                  : "bg-background text-textSecondary border-border"
+              }`}
+            >
+              {project.is_published ? (
+                <>
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Published</span>
+                </>
+              ) : (
+                <>
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Draft</span>
+                </>
+              )}
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-1.5">
+            {project.demo_url && (
+              <a
+                href={project.demo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-xl bg-background hover:bg-border text-textSecondary hover:text-primary border border-border transition-colors"
+                title="Open Link"
+              >
+                <Globe className="w-4 h-4" />
+              </a>
+            )}
+
+            {project.repo_url && (
+              <a
+                href={project.repo_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-xl bg-background hover:bg-border text-textSecondary hover:text-primary border border-border transition-colors"
+                title="View Repository"
+              >
+                <FaGithub className="w-4 h-4" />
+              </a>
+            )}
+
+            <Link
+              href={`/dashboard/projects/${project.id}/edit`}
+              className="p-2 rounded-xl bg-background hover:bg-border text-textSecondary hover:text-textPrimary border border-border transition-colors"
+              title="Edit Project"
+            >
+              <Edit2 className="w-4 h-4" />
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmProject(project)}
+              className="p-2 rounded-xl bg-background hover:bg-red-500/10 text-textSecondary hover:text-red-400 border border-border transition-colors"
+              title="Delete Project"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-textPrimary">
-            Showcase Projects
-          </h2>
-          <p className="text-xs text-textSecondary mt-1">
-            Manage your custom projects with cover images, demo links, and tech
-            stacks
+          <div className="flex items-center space-x-3">
+            <h2 className="text-2xl font-bold text-textPrimary">
+              Showcase Projects
+            </h2>
+            {isSavingOrder && (
+              <span className="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[11px] flex items-center space-x-1.5">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Saving order...</span>
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-textSecondary mt-1 flex items-center space-x-1.5">
+            <ArrowUpDown className="w-3.5 h-3.5 text-primary" />
+            <span>Drag items to reorder priority on your live portfolio.</span>
           </p>
         </div>
         <Link
@@ -151,6 +338,7 @@ export default function ProjectListManager({
           ].map((tab) => (
             <button
               key={tab.key}
+              type="button"
               onClick={() => setFilterStatus(tab.key as any)}
               className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                 filterStatus === tab.key
@@ -181,161 +369,32 @@ export default function ProjectListManager({
         </div>
       ) : (
         <div className="bg-surface border border-border rounded-2xl overflow-hidden shadow-lg">
-          <div className="divide-y divide-border">
-            {filtered.map((project) => {
-              const isWorking = loadingId === project.id;
-              return (
-                <div
+          {isDragEnabled ? (
+            <Reorder.Group
+              axis="y"
+              values={projects}
+              onReorder={handleReorder}
+              className="divide-y divide-border"
+            >
+              {projects.map((project) => (
+                <Reorder.Item
                   key={project.id}
-                  className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-background/40 transition-colors"
+                  value={project}
+                  className="bg-surface select-none"
                 >
-                  <div className="flex items-start sm:items-center space-x-4 min-w-0 flex-1">
-                    {project.image_url ? (
-                      <img
-                        src={project.image_url}
-                        alt={project.title}
-                        className="w-16 h-16 sm:w-20 sm:h-14 rounded-xl object-cover border border-border shrink-0 bg-background"
-                      />
-                    ) : (
-                      <div className="w-16 h-16 sm:w-20 sm:h-14 rounded-xl bg-background border border-border flex items-center justify-center text-primary shrink-0">
-                        <FolderKanban className="w-6 h-6 opacity-80" />
-                      </div>
-                    )}
-
-                    <div className="min-w-0 flex-1 space-y-1">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="text-base font-bold text-textPrimary truncate">
-                          {project.title}
-                        </h3>
-                        {project.is_featured && (
-                          <span className="px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/20 text-[10px] font-medium flex items-center space-x-1">
-                            <Star className="w-2.5 h-2.5 fill-yellow-400" />
-                            <span>Featured</span>
-                          </span>
-                        )}
-                        <span className="text-[11px] font-mono text-textSecondary">
-                          /{project.slug}
-                        </span>
-                      </div>
-
-                      {project.description && (
-                        <p className="text-xs text-textSecondary line-clamp-1">
-                          {project.description}
-                        </p>
-                      )}
-
-                      {/* Tech stack tags */}
-                      {project.tech_stacks &&
-                        project.tech_stacks.length > 0 && (
-                          <div className="flex flex-wrap gap-1 pt-1">
-                            {project.tech_stacks.map((t) => (
-                              <span
-                                key={t.id}
-                                className="px-2 py-0.5 rounded-md bg-background text-[10px] text-textSecondary border border-border/80"
-                              >
-                                {t.name}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                    </div>
-                  </div>
-
-                  {/* Actions & Toggles */}
-                  <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 md:pt-0 border-t md:border-t-0 border-border/50 shrink-0">
-                    <div className="flex items-center space-x-2">
-                      {/* Featured button */}
-                      <button
-                        onClick={() => handleToggleFeatured(project)}
-                        disabled={isWorking}
-                        className={`p-2 rounded-xl text-xs border transition-all ${
-                          project.is_featured
-                            ? "bg-yellow-500/10 text-yellow-400 border-yellow-500/20"
-                            : "bg-background text-textSecondary border-border hover:text-textPrimary"
-                        }`}
-                        title={
-                          project.is_featured
-                            ? "Remove from featured"
-                            : "Mark as featured"
-                        }
-                      >
-                        <Star
-                          className={`w-4 h-4 ${
-                            project.is_featured ? "fill-yellow-400" : ""
-                          }`}
-                        />
-                      </button>
-
-                      {/* Published button */}
-                      <button
-                        onClick={() => handleTogglePublished(project)}
-                        disabled={isWorking}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-medium border flex items-center space-x-1.5 transition-all ${
-                          project.is_published
-                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                            : "bg-background text-textSecondary border-border"
-                        }`}
-                      >
-                        {project.is_published ? (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Published</span>
-                          </>
-                        ) : (
-                          <>
-                            <Clock className="w-3.5 h-3.5" />
-                            <span>Draft</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="flex items-center space-x-1.5">
-                      {project.demo_url && (
-                        <a
-                          href={project.demo_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 rounded-xl bg-background hover:bg-border text-textSecondary hover:text-primary border border-border transition-colors"
-                          title="View Live Demo"
-                        >
-                          <Globe className="w-4 h-4" />
-                        </a>
-                      )}
-
-                      {project.repo_url && (
-                        <a
-                          href={project.repo_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 rounded-xl bg-background hover:bg-border text-textSecondary hover:text-primary border border-border transition-colors"
-                          title="View Repository"
-                        >
-                          <FaGithub className="w-4 h-4" />
-                        </a>
-                      )}
-
-                      <Link
-                        href={`/dashboard/projects/${project.id}/edit`}
-                        className="p-2 rounded-xl bg-background hover:bg-border text-textSecondary hover:text-textPrimary border border-border transition-colors"
-                        title="Edit Project"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </Link>
-
-                      <button
-                        onClick={() => setDeleteConfirmProject(project)}
-                        className="p-2 rounded-xl bg-background hover:bg-red-500/10 text-textSecondary hover:text-red-400 border border-border transition-colors"
-                        title="Delete Project"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
+                  {renderProjectRow(project, true)}
+                </Reorder.Item>
+              ))}
+            </Reorder.Group>
+          ) : (
+            <div className="divide-y divide-border">
+              {filtered.map((project) => (
+                <div key={project.id}>
+                  {renderProjectRow(project, false)}
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

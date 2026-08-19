@@ -106,7 +106,7 @@ export default function ProjectGallery({
 
       {/* Thumbnails Row */}
       {allImages.length > 1 && (
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex gap-3 overflow-x-auto px-1 py-1 pb-2 scrollbar-none">
           {allImages.map((imgUrl, index) => {
             const isActive = index === currentIndex;
             return (
@@ -178,22 +178,25 @@ export default function ProjectGallery({
 
           {allImages.length > 1 && (
             <div
-              className="flex justify-center gap-2 overflow-x-auto py-2 z-10"
+              className="w-full overflow-x-auto py-2 z-10 scrollbar-none"
               onClick={(e) => e.stopPropagation()}
             >
-              {allImages.map((imgUrl, index) => (
-                <button
-                  key={imgUrl + index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`rounded-lg overflow-hidden aspect-video w-16 shrink-0 border-2 transition-all ${
-                    index === currentIndex
-                      ? 'border-primary ring-2 ring-primary/40'
-                      : 'border-white/20 opacity-50 hover:opacity-100'
-                  }`}
-                >
-                  <img src={imgUrl} alt="" className="w-full h-full object-cover" />
-                </button>
-              ))}
+              <div className="flex w-max min-w-full justify-center gap-2 px-4">
+                {allImages.map((imgUrl, index) => (
+                  <button
+                    key={imgUrl + index}
+                    type="button"
+                    onClick={() => setCurrentIndex(index)}
+                    className={`rounded-lg overflow-hidden aspect-video w-16 shrink-0 border-2 transition-all ${
+                      index === currentIndex
+                        ? 'border-primary ring-2 ring-primary/40 scale-105'
+                        : 'border-white/20 opacity-50 hover:opacity-100'
+                    }`}
+                  >
+                    <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>

@@ -119,11 +119,11 @@ export default function ProjectCard({ project }: { project: Project }) {
                 href={project.demo_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center space-x-2 text-xs font-medium text-primary hover:text-primary-light transition-colors py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20"
-                title="Live Demo"
+                className="inline-flex items-center space-x-1.5 text-xs font-medium text-primary hover:text-primary-light transition-colors py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20"
+                title="Open Link"
               >
-                <Globe className="w-4 h-4" />
-                <span>Demo</span>
+                <Globe className="w-3.5 h-3.5" />
+                <span>Open Link</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
             )}

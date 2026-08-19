@@ -12,6 +12,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
 
+  const [activeSection, setActiveSection] = useState<string>("");
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -19,6 +21,38 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Scroll spy for homepage hash sections
+  useEffect(() => {
+    if (pathname !== "/") {
+      setActiveSection("");
+      return;
+    }
+
+    const sections = ["about", "skills"];
+    const handleScrollSpy = () => {
+      const scrollY = window.scrollY;
+      if (scrollY < 200) {
+        setActiveSection("");
+        return;
+      }
+      for (const sectionId of sections) {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          const top = el.offsetTop - 140;
+          const height = el.offsetHeight;
+          if (scrollY >= top && scrollY < top + height) {
+            setActiveSection(sectionId);
+            return;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollSpy, { passive: true });
+    handleScrollSpy();
+    return () => window.removeEventListener("scroll", handleScrollSpy);
+  }, [pathname]);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -50,6 +84,16 @@ export default function Navbar() {
     { name: "Contact", href: "/contact" },
   ];
 
+  const getIsActive = (href: string) => {
+    if (pathname === "/") {
+      if (href === "/") return activeSection === "";
+      if (href === "/#about") return activeSection === "about";
+      if (href === "/#skills") return activeSection === "skills";
+      return false;
+    }
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
   return (
     <>
       <nav
@@ -73,10 +117,7 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-6">
             {navLinks.map((link) => {
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href) && !link.href.includes("#");
+              const isActive = getIsActive(link.href);
 
               return (
                 <Link
@@ -84,7 +125,7 @@ export default function Navbar() {
                   href={link.href}
                   className={`text-xs font-semibold tracking-wide transition-colors ${
                     isActive
-                      ? "text-primary"
+                      ? "text-primary font-bold"
                       : "text-textSecondary hover:text-primary"
                   }`}
                 >
@@ -135,10 +176,7 @@ export default function Navbar() {
         {mobileMenuOpen && (
           <div className="md:hidden mt-4 pt-4 px-6 pb-4 border-t border-border/60 flex flex-col space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
             {navLinks.map((link) => {
-              const isActive =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href) && !link.href.includes("#");
+              const isActive = getIsActive(link.href);
 
               return (
                 <Link

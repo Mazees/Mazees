@@ -206,3 +206,29 @@ export async function toggleProjectFeaturedAction(id: string, isFeatured: boolea
     return { success: false, error: (err as Error).message || 'Failed to toggle featured' };
   }
 }
+
+export async function reorderProjectsAction(orderedIds: string[]) {
+  try {
+    const supabase = await createClient();
+
+    const updates = orderedIds.map((id, index) =>
+      supabase
+        .from('projects')
+        .update({ order_index: index })
+        .eq('id', id)
+    );
+
+    await Promise.all(updates);
+
+    revalidatePath('/', 'layout');
+    revalidatePath('/dashboard/projects');
+    revalidatePath('/projects');
+    return { success: true };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      error: (err as Error).message || 'Failed to reorder projects',
+    };
+  }
+}
+

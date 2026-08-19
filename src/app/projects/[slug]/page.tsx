@@ -130,7 +130,7 @@ export default async function ProjectDetailPage({
                   className="inline-flex items-center space-x-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-primary/20"
                 >
                   <Globe className="w-4 h-4" />
-                  <span>Open Live Demo</span>
+                  <span>Open Link</span>
                   <ExternalLink className="w-4 h-4" />
                 </a>
               )}

@@ -251,7 +251,7 @@ export default function ProjectForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-textSecondary mb-1.5 uppercase tracking-wider">
-                  Live Demo / Production URL
+                  Project Link / URL
                 </label>
                 <div className="relative">
                   <Globe className="w-4 h-4 text-textSecondary absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -264,7 +264,7 @@ export default function ProjectForm({
                   />
                 </div>
                 <span className="text-[10px] text-textSecondary mt-1 block">
-                  Public URL for live application or landing page
+                  Public URL for live application, platform, or project
                 </span>
               </div>
 
@@ -383,21 +383,6 @@ export default function ProjectForm({
                 onChange={(e) => setIsFeatured(e.target.checked)}
                 className="w-4 h-4 rounded border-border accent-primary cursor-pointer"
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-textSecondary mb-1.5 uppercase tracking-wider">
-                Display Order
-              </label>
-              <input
-                type="number"
-                value={orderIndex}
-                onChange={(e) => setOrderIndex(Number(e.target.value))}
-                className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-textPrimary focus:outline-none focus:border-primary transition-all"
-              />
-              <span className="text-[10px] text-textSecondary mt-1 block">
-                Lower numbers appear first
-              </span>
             </div>
           </div>
 
