@@ -43,7 +43,7 @@ export default function ProjectShowcase({
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
+    const list = projects.filter((project) => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         project.title.toLowerCase().includes(q) ||
@@ -64,6 +64,13 @@ export default function ProjectShowcase({
           (!project.project_type || project.project_type === "personal"));
 
       return matchesSearch && matchesTech && matchesType;
+    });
+
+    // Ensure featured projects are displayed first
+    return list.sort((a, b) => {
+      if (a.is_featured && !b.is_featured) return -1;
+      if (!a.is_featured && b.is_featured) return 1;
+      return (a.order_index ?? 0) - (b.order_index ?? 0);
     });
   }, [projects, searchQuery, selectedTech, selectedType]);
 

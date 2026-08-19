@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
 import { Mail, Clock, MapPin, ArrowUpRight } from "lucide-react";
-import { FaGithub, FaInstagram, FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
+import { FaGithub, FaInstagram, FaWhatsapp, FaTelegramPlane, FaLinkedin } from "react-icons/fa";
 
 export const metadata: Metadata = {
   title: "Contact — Mada Putra Adhadriyanto",
@@ -13,6 +13,12 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   const directChannels = [
+    {
+      label: "LinkedIn Profile",
+      value: "linkedin.com/in/mada-putra-adhadriyanto",
+      href: "https://www.linkedin.com/in/mada-putra-adhadriyanto-063434329/",
+      icon: FaLinkedin,
+    },
     {
       label: "WhatsApp Direct",
       value: "+62 812-3448-9008",

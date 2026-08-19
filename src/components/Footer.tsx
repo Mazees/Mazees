@@ -1,4 +1,4 @@
-import { FaGithub, FaInstagram, FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
+import { FaGithub, FaInstagram, FaWhatsapp, FaTelegramPlane, FaLinkedin } from "react-icons/fa";
 import { Mail } from "lucide-react";
 
 export default function Footer() {
@@ -15,6 +15,15 @@ export default function Footer() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <a
+            href="https://www.linkedin.com/in/mada-putra-adhadriyanto-063434329/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-textSecondary hover:text-[#0077B5] transition-colors"
+            title="LinkedIn"
+          >
+            <FaLinkedin className="w-5 h-5" />
+          </a>
           <a
             href="https://wa.me/6281234489008"
             target="_blank"

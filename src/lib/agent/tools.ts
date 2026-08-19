@@ -281,6 +281,7 @@ export async function executeTool(name: string, args: Record<string, any> = {}):
       return {
         name: "Mada Putra Adhadriyanto",
         email: "madaadha21@gmail.com",
+        linkedin: "https://www.linkedin.com/in/mada-putra-adhadriyanto-063434329/",
         whatsapp: "https://wa.me/6281234489008 (+62 812-3448-9008)",
         telegram: "https://t.me/mazeesid (@mazeesid)",
         github: "https://github.com/Mazees",

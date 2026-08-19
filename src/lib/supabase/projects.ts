@@ -16,6 +16,7 @@ export async function getPublishedProjects(): Promise<Project[]> {
       )
     `)
     .eq('is_published', true)
+    .order('is_featured', { ascending: false })
     .order('order_index')
     .order('created_at', { ascending: false });
 
