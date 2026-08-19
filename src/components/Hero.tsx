@@ -35,7 +35,7 @@ export default function Hero({ avatarUrl }: { avatarUrl?: string }) {
               Mada Putra Adhadriyanto
             </h1>
             <h2 className="text-lg sm:text-2xl md:text-3xl text-primary font-bold tracking-tight">
-              Agentic AI Explorer · Full-Stack Developer
+              Agentic AI Explorer & Web Developer
             </h2>
           </div>
 

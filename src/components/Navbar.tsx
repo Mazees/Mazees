@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Bot } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
@@ -10,6 +10,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,18 +27,27 @@ export default function Navbar() {
 
   const handleStartTour = () => {
     setMobileMenuOpen(false);
-    if (typeof window !== "undefined") {
-      window.dispatchEvent(new Event("start-mark-tour"));
+    if (pathname !== "/") {
+      router.push("/");
+      setTimeout(() => {
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("start-mark-tour"));
+        }
+      }, 300);
+    } else {
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("start-mark-tour"));
+      }
     }
   };
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/#about" },
+    { name: "Skills", href: "/#skills" },
     { name: "Projects", href: "/projects" },
     { name: "Repositories", href: "/repositories" },
-    { name: "Skills", href: "/#skills" },
-    { name: "Contact", href: "/#contact" },
+    { name: "Contact", href: "/contact" },
   ];
 
   return (

@@ -1,10 +1,11 @@
-import { Mail } from "lucide-react";
-import { FaGithub, FaInstagram } from "react-icons/fa";
+import Link from "next/link";
+import { ArrowRight, Send, Mail } from "lucide-react";
+import { FaWhatsapp, FaTelegramPlane } from "react-icons/fa";
 
 export default function Contact() {
   return (
     <section
-      className="pb-24 pt-28 border-t border-border bg-surface/50"
+      className="pb-24 pt-28 border-t border-border bg-surface/30"
       id="contact"
     >
       <div className="max-w-4xl mx-auto px-6 text-center">
@@ -15,35 +16,26 @@ export default function Contact() {
           Let&apos;s Build Something Together
         </h2>
         <p className="text-base sm:text-lg text-textSecondary mb-8 max-w-xl mx-auto font-normal">
-          Have an idea, a project, or looking to discuss engineering
-          opportunities? Let&apos;s connect.
+          Have an idea, a project, or looking to discuss engineering opportunities? Drop a message via Email, WhatsApp, or Telegram.
         </p>
 
-        <div className="flex flex-wrap justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/contact"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-md shadow-primary/20 hover:scale-[1.02] group"
+          >
+            <Send className="w-4 h-4" />
+            <span>Open Contact Form</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
           <a
-            href="https://github.com/Mazees"
+            href="https://wa.me/6281234489008"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center space-x-2 px-6 py-3 bg-surface hover:bg-background border border-border hover:border-primary text-textPrimary rounded-full transition-all group"
+            className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-surface hover:bg-background border border-border hover:border-primary text-textPrimary px-6 py-3.5 rounded-xl font-semibold transition-all hover:scale-[1.02]"
           >
-            <FaGithub className="w-5 h-5 group-hover:text-primary transition-colors" />
-            <span>GitHub</span>
-          </a>
-          <a
-            href="https://instagram.com/mada.putraa"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center space-x-2 px-6 py-3 bg-surface hover:bg-background border border-border hover:border-primary text-textPrimary rounded-full transition-all group"
-          >
-            <FaInstagram className="w-5 h-5 group-hover:text-primary transition-colors" />
-            <span>Instagram</span>
-          </a>
-          <a
-            href="mailto:mada.putra.a@gmail.com"
-            className="flex items-center space-x-2 px-6 py-3 bg-surface hover:bg-background border border-border hover:border-primary text-textPrimary rounded-full transition-all group"
-          >
-            <Mail className="w-5 h-5 group-hover:text-primary transition-colors" />
-            <span>Email</span>
+            <FaWhatsapp className="w-4 h-4 text-emerald-500" />
+            <span>WhatsApp Direct</span>
           </a>
         </div>
       </div>
