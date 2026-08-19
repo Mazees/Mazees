@@ -1,46 +1,77 @@
-import { Terminal, Database, BrainCircuit, Blocks } from "lucide-react";
-
 export default function About() {
   const focuses = [
-    { name: "AI Integration", icon: <BrainCircuit className="w-5 h-5" /> },
-    { name: "Web Development", icon: <Terminal className="w-5 h-5" /> },
-    { name: "Agentic Systems", icon: <Blocks className="w-5 h-5" /> },
-    { name: "APIs & Middleware", icon: <Database className="w-5 h-5" /> },
+    {
+      title: "AI Integration",
+      desc: "Exploring LLMs, AI tools, and ways to integrate intelligent features into applications.",
+    },
+    {
+      title: "Web Development",
+      desc: "Building web applications and interfaces with React, Next.js, and modern web technologies.",
+    },
+    {
+      title: "Agentic Systems",
+      desc: "Experimenting with AI agents, tool usage, agentic workflows, and autonomous task execution.",
+    },
+    {
+      title: "AI Applications",
+      desc: "Exploring how AI can be applied to everyday problems and turned into useful applications.",
+    },
+    {
+      title: "Developer Tools",
+      desc: "Building small tools, utilities, and experiments to improve development workflows.",
+    },
+    {
+      title: "Desktop Applications",
+      desc: "Exploring cross-platform desktop applications with Electron and web technologies.",
+    },
   ];
 
   return (
-    <section className="py-24 border-t border-border" id="about">
+    <section className="py-24 border-t border-border/80" id="about">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-16 items-start">
-          <div className="space-y-6">
-            <h2 className="text-3xl font-bold text-textPrimary">Building Ideas Into Software</h2>
-            <div className="space-y-4 text-textSecondary leading-relaxed">
+        <div className="grid md:grid-cols-12 gap-16 items-start">
+          {/* Left Column: Background & Bio */}
+          <div className="md:col-span-5 space-y-6">
+            <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block">
+              // Background & Philosophy
+            </span>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-textPrimary tracking-tight leading-tight">
+              Building Ideas Into Software
+            </h2>
+            <div className="space-y-4 text-textSecondary text-base md:text-lg leading-relaxed font-normal">
               <p>
-                I am an Informatics student at UPN "Veteran" Jawa Timur with a deep interest in practical software development, AI integration, agentic systems, LLM-powered applications, automation, and clean functional UI/UX.
+                I&apos;m an Informatics student at UPN &ldquo;Veteran&rdquo; Jawa Timur who enjoys exploring and building things with technology. I&apos;m interested in web development, AI applications, and agentic systems, especially in finding ways to apply them to real-world problems and everyday life.
               </p>
               <p>
-                My focus is on bridging the gap between artificial intelligence and practical web development, building tools that are not only functional but also intuitive and developer-friendly. I enjoy experimenting with new technologies and pushing the boundaries of what AI agents can do.
+                I&apos;m still learning and experimenting, but I enjoy turning what I learn into projects and seeing where an idea can go.
               </p>
             </div>
           </div>
           
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-textPrimary">Current Focus</h3>
+          {/* Right Column: Core Focus Areas */}
+          <div className="md:col-span-7 space-y-6">
+            <span className="text-xs font-mono font-bold text-textSecondary tracking-widest uppercase block">
+              // Core Focus Areas
+            </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {focuses.map((focus) => (
-                <div key={focus.name} className="flex items-center space-x-3 p-4 rounded-lg bg-surface border border-border hover:border-primary/50 transition-colors">
-                  <div className="text-primary">{focus.icon}</div>
-                  <span className="text-textPrimary font-medium">{focus.name}</span>
+              {focuses.map((focus, index) => (
+                <div
+                  key={focus.title}
+                  className="p-6 rounded-2xl bg-surface border border-border hover:border-primary/50 transition-all hover:translate-y-[-2px] shadow-sm flex flex-col justify-between"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-textPrimary font-bold text-base">{focus.title}</h4>
+                      <span className="text-[11px] font-mono text-textSecondary/60 font-semibold">
+                        0{index + 1}
+                      </span>
+                    </div>
+                    <p className="text-textSecondary text-xs leading-relaxed">
+                      {focus.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
-              <div className="flex items-center space-x-3 p-4 rounded-lg bg-surface border border-border hover:border-primary/50 transition-colors">
-                <div className="text-primary"><Terminal className="w-5 h-5" /></div>
-                <span className="text-textPrimary font-medium">Developer Tools</span>
-              </div>
-              <div className="flex items-center space-x-3 p-4 rounded-lg bg-surface border border-border hover:border-primary/50 transition-colors">
-                <div className="text-primary"><Blocks className="w-5 h-5" /></div>
-                <span className="text-textPrimary font-medium">Desktop Applications</span>
-              </div>
             </div>
           </div>
         </div>

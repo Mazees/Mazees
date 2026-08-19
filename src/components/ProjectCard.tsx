@@ -1,8 +1,14 @@
-import Link from 'next/link';
-import { Globe, ArrowUpRight, FolderKanban, Star, ExternalLink } from 'lucide-react';
-import { FaGithub } from 'react-icons/fa';
-import type { Project } from '@/types/project';
-import TechIcon from '@/components/TechIcon';
+import Link from "next/link";
+import {
+  Globe,
+  ArrowUpRight,
+  FolderKanban,
+  Star,
+  ExternalLink,
+} from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import type { Project } from "@/types/project";
+import TechIcon from "@/components/TechIcon";
 
 export default function ProjectCard({ project }: { project: Project }) {
   const detailUrl = `/projects/${project.slug}`;
@@ -31,18 +37,36 @@ export default function ProjectCard({ project }: { project: Project }) {
           </div>
         )}
 
+        {/* Project Type Badge */}
+        {project.project_type === "client" && (
+          <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-primary/40 text-primary-light text-[11px] font-semibold flex items-center space-x-1 shadow-lg z-10">
+            <span>Client Work</span>
+          </div>
+        )}
+        {project.project_type === "opensource" && (
+          <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-border text-textPrimary text-[11px] font-semibold flex items-center space-x-1 shadow-lg z-10">
+            <span>Open Source</span>
+          </div>
+        )}
+
         {project.is_featured && (
-          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-yellow-500/30 text-yellow-400 text-[11px] font-medium flex items-center space-x-1 shadow-lg z-10">
+          <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-yellow-500/30 text-yellow-400 text-[11px] font-medium flex items-center space-x-1 shadow-lg z-10">
             <Star className="w-3 h-3 fill-yellow-400" />
             <span>Featured</span>
           </div>
         )}
 
+        {project.images && project.images.length > 1 && (
+          <div className="absolute bottom-3 right-3 px-2 py-1 rounded-md bg-black/70 backdrop-blur-md border border-white/10 text-white text-[10px] font-mono flex items-center space-x-1 shadow z-10">
+            <span>+{project.images.length} photos</span>
+          </div>
+        )}
+
         {/* Hover overlay hint */}
         <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span className="px-3 py-1.5 rounded-lg bg-background/90 backdrop-blur-md border border-border text-xs font-medium text-textPrimary flex items-center space-x-1.5 shadow-lg">
+          <span className="px-4 py-2 rounded-xl bg-background/90 backdrop-blur-md border border-border text-xs font-medium text-textPrimary flex items-center space-x-2 shadow-lg">
             <span>View Project</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-primary" />
+            <ArrowUpRight className="w-4 h-4 text-primary" />
           </span>
         </div>
       </Link>
@@ -57,17 +81,17 @@ export default function ProjectCard({ project }: { project: Project }) {
           </h3>
         </Link>
 
-        <p className="text-textSecondary text-xs leading-relaxed flex-grow line-clamp-3 mb-5">
-          {project.description || 'No description provided.'}
+        <p className="text-textSecondary text-xs leading-relaxed flex-grow line-clamp-3 mb-4">
+          {project.description || "No description provided."}
         </p>
 
         {/* Tech Stack Badges */}
         {project.tech_stacks && project.tech_stacks.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-6">
+          <div className="flex flex-wrap gap-2 mb-6">
             {project.tech_stacks.slice(0, 4).map((tech) => (
               <span
                 key={tech.id}
-                className="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-background border border-border text-[11px] text-textSecondary"
+                className="inline-flex items-center space-x-2 px-3 py-1 rounded-lg bg-background border border-border text-[11px] text-textSecondary"
               >
                 <TechIcon
                   name={tech.name}
@@ -95,10 +119,10 @@ export default function ProjectCard({ project }: { project: Project }) {
                 href={project.demo_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center space-x-1.5 text-xs font-medium text-primary hover:text-primary-light transition-colors py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20"
+                className="inline-flex items-center space-x-2 text-xs font-medium text-primary hover:text-primary-light transition-colors py-1.5 px-3 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20"
                 title="Live Demo"
               >
-                <Globe className="w-3.5 h-3.5" />
+                <Globe className="w-4 h-4" />
                 <span>Demo</span>
                 <ExternalLink className="w-3 h-3" />
               </a>
@@ -109,10 +133,10 @@ export default function ProjectCard({ project }: { project: Project }) {
                 href={project.repo_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center space-x-1.5 text-xs font-medium text-textSecondary hover:text-textPrimary transition-colors py-1.5 px-3 rounded-lg bg-background hover:bg-border border border-border"
+                className="inline-flex items-center space-x-2 text-xs font-medium text-textSecondary hover:text-textPrimary transition-colors py-1.5 px-3 rounded-lg bg-background hover:bg-border border border-border"
                 title="Source Code"
               >
-                <FaGithub className="w-3.5 h-3.5" />
+                <FaGithub className="w-4 h-4" />
                 <span>Source</span>
               </a>
             )}
@@ -120,10 +144,10 @@ export default function ProjectCard({ project }: { project: Project }) {
 
           <Link
             href={detailUrl}
-            className="text-xs text-textSecondary hover:text-primary transition-colors flex items-center space-x-1 font-medium ml-auto"
+            className="text-xs text-textSecondary hover:text-primary transition-colors flex items-center space-x-2 font-medium ml-auto"
           >
             <span>Details</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            <ArrowUpRight className="w-4 h-4" />
           </Link>
         </div>
       </div>

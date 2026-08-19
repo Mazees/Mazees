@@ -5,11 +5,11 @@ import { getTechStacks } from '@/lib/supabase/techstack';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
-import WhatIBuild from '@/components/WhatIBuild';
-import TechStack from '@/components/TechStack';
-import GitHubStats from '@/components/GitHubStats';
+import ClientProjectsPreview from '@/components/ClientProjectsPreview';
 import ProjectsPreview from '@/components/ProjectsPreview';
 import RepositoriesPreview from '@/components/RepositoriesPreview';
+import TechStack from '@/components/TechStack';
+import GitHubStats from '@/components/GitHubStats';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 
@@ -28,11 +28,10 @@ export default async function Home() {
       <Navbar />
       <Hero avatarUrl={profile?.avatar_url} />
       <About />
-      <WhatIBuild />
-      <TechStack techStacks={techStacks} />
-      <GitHubStats profile={profile} repos={repos} />
       <ProjectsPreview projects={projects} />
+      <ClientProjectsPreview projects={projects} />
       <RepositoriesPreview repos={repos} />
+      <TechStack techStacks={techStacks} /> 
       <Contact />
       <Footer />
     </main>

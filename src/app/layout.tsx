@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const jakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-jakarta-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Mada Putra Adhadriyanto — AI Full-Stack Developer",
-  description: "Portfolio of Mada Putra Adhadriyanto (@Mazees), an Informatics student and AI Full-Stack Developer building AI applications, web applications, developer tools, and agentic systems.",
+  title: "Mada Putra Adhadriyanto — Full-Stack AI Engineer",
+  description:
+    "Portfolio of Mada Putra Adhadriyanto (@Mazees), an Informatics student and Full-Stack AI Engineer exploring modern web development, intelligent AI applications, agentic workflows, and practical real-world AI implementations.",
 };
 
 export default function RootLayout({
@@ -15,8 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${inter.className} min-h-screen flex flex-col`}>
+    <html lang="en" className="dark scroll-smooth">
+      <body
+        className={`${jakartaSans.variable} ${jetbrainsMono.variable} font-sans min-h-screen flex flex-col antialiased selection:bg-primary/30 selection:text-primary-light text-textPrimary text-base`}
+      >
         {children}
       </body>
     </html>

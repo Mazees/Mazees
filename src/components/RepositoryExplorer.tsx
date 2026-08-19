@@ -65,10 +65,7 @@ export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[
             <GitFork className="w-3.5 h-3.5" />
             <span>Open Source</span>
           </div>
-          <h2 className="text-3xl font-bold text-textPrimary">Repository Explorer</h2>
-          <p className="text-textSecondary mt-2 text-sm max-w-xl">
-            Live public repositories synchronized dynamically from GitHub API (@Mazees).
-          </p>
+          <h2 className="text-3xl font-bold text-textPrimary">Explore My Repository</h2>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 mb-8">

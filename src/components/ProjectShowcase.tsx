@@ -3,11 +3,20 @@
 import { useState, useMemo } from 'react';
 import { Search, Filter, FolderKanban } from 'lucide-react';
 import ProjectCard from './ProjectCard';
-import type { Project } from '@/types/project';
+import type { Project, ProjectType } from '@/types/project';
 
-export default function ProjectShowcase({ projects }: { projects: Project[] }) {
+type FilterType = 'all' | 'client' | 'personal' | 'opensource';
+
+export default function ProjectShowcase({
+  projects,
+  isDedicatedPage = false,
+}: {
+  projects: Project[];
+  isDedicatedPage?: boolean;
+}) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTech, setSelectedTech] = useState('All');
+  const [selectedType, setSelectedType] = useState<FilterType>('all');
 
   // Extract all unique tech stack names present across projects
   const availableTechs = useMemo(() => {
@@ -18,6 +27,16 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
       });
     });
     return ['All', ...Array.from(techSet).sort()];
+  }, [projects]);
+
+  // Count items per project type
+  const typeCounts = useMemo(() => {
+    return {
+      all: projects.length,
+      client: projects.filter((p) => p.project_type === 'client').length,
+      personal: projects.filter((p) => !p.project_type || p.project_type === 'personal').length,
+      opensource: projects.filter((p) => p.project_type === 'opensource').length,
+    };
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
@@ -32,25 +51,66 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
         selectedTech === 'All' ||
         project.tech_stacks?.some((t) => t.name === selectedTech);
 
-      return matchesSearch && matchesTech;
+      const matchesType =
+        selectedType === 'all' ||
+        (selectedType === 'client' && project.project_type === 'client') ||
+        (selectedType === 'opensource' && project.project_type === 'opensource') ||
+        (selectedType === 'personal' && (!project.project_type || project.project_type === 'personal'));
+
+      return matchesSearch && matchesTech && matchesType;
     });
-  }, [projects, searchQuery, selectedTech]);
+  }, [projects, searchQuery, selectedTech, selectedType]);
 
   return (
-    <section className="py-24 border-t border-border" id="projects">
+    <section
+      className={`${isDedicatedPage ? 'pt-2 pb-16' : 'py-24 border-t border-border'}`}
+      id="projects"
+    >
       <div className="max-w-7xl mx-auto px-6">
-        <div className="mb-12">
-          <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-border bg-surface/50 text-xs text-primary mb-3">
-            <span>Portfolio Showcase</span>
-          </div>
-          <h2 className="text-3xl font-bold text-textPrimary">Featured Projects</h2>
-          <p className="text-textSecondary mt-2 text-sm max-w-xl">
-            Selected software products, AI agents, and web applications built with full-stack technologies.
-          </p>
+        <div className="mb-10">
+          <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
+            // Portfolio Showcase
+          </span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight">
+            Featured Projects & Case Studies
+          </h2>
         </div>
 
-        {/* Controls */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8">
+        {/* Project Type Filter Tabs */}
+        <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-border/80 pb-4">
+          {[
+            { id: 'all', label: 'All Projects', count: typeCounts.all },
+            { id: 'client', label: 'Client Work', count: typeCounts.client },
+            { id: 'personal', label: 'Personal & AI Lab', count: typeCounts.personal },
+            { id: 'opensource', label: 'Open Source', count: typeCounts.opensource },
+          ].map((tab) => {
+            if (tab.id !== 'all' && tab.count === 0) return null;
+            const isActive = selectedType === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setSelectedType(tab.id as FilterType)}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition-all ${
+                  isActive
+                    ? 'bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]'
+                    : 'bg-surface hover:bg-surface/80 border border-border text-textSecondary hover:text-textPrimary'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span
+                  className={`px-1.5 py-0.2 rounded-md text-[10px] font-mono ${
+                    isActive ? 'bg-black/20 text-white' : 'bg-background text-textSecondary'
+                  }`}
+                >
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Controls: Search and Tech Stack */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-10">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
               <Search className="h-4 w-4 text-textSecondary" />
@@ -72,7 +132,7 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
               <select
                 value={selectedTech}
                 onChange={(e) => setSelectedTech(e.target.value)}
-                className="block w-full pl-10 pr-8 py-2.5 bg-surface border border-border rounded-xl text-sm text-textPrimary appearance-none focus:outline-none focus:border-primary transition-all cursor-pointer"
+                className="block w-full pl-10 pr-8 py-2.5 bg-surface border border-border rounded-xl text-sm text-textPrimary appearance-none focus:outline-none focus:border-primary transition-all cursor-pointer font-medium"
               >
                 {availableTechs.map((tech) => (
                   <option key={tech} value={tech}>
@@ -99,13 +159,14 @@ export default function ProjectShowcase({ projects }: { projects: Project[] }) {
                 ? 'No projects in showcase yet.'
                 : 'No projects found matching your search or filters.'}
             </p>
-            {searchQuery || selectedTech !== 'All' ? (
+            {searchQuery || selectedTech !== 'All' || selectedType !== 'all' ? (
               <button
                 onClick={() => {
                   setSearchQuery('');
                   setSelectedTech('All');
+                  setSelectedType('all');
                 }}
-                className="mt-3 text-xs text-primary hover:underline font-medium"
+                className="mt-3 text-xs text-primary hover:underline font-semibold"
               >
                 Clear all filters
               </button>

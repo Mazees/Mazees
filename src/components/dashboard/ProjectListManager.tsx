@@ -72,7 +72,11 @@ export default function ProjectListManager({
 
   async function handleDelete(project: Project) {
     setLoadingId(project.id);
-    const res = await deleteProjectAction(project.id, project.image_url);
+    const res = await deleteProjectAction(
+      project.id,
+      project.image_url,
+      project.images
+    );
     if (res.success) {
       setProjects((prev) => prev.filter((p) => p.id !== project.id));
       setDeleteConfirmProject(null);

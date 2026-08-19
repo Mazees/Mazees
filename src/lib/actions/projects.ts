@@ -121,16 +121,31 @@ export async function updateProjectAction(
   }
 }
 
-export async function deleteProjectAction(id: string, imageUrl?: string | null) {
+export async function deleteProjectAction(
+  id: string,
+  imageUrl?: string | null,
+  images?: string[] | null
+) {
   try {
     const supabase = await createClient();
 
-    // Delete image if exists
+    // Collect all unique storage paths to delete
+    const pathsToDelete: string[] = [];
     if (imageUrl) {
-      const path = extractStoragePath(imageUrl);
-      if (path) {
-        await supabase.storage.from('project-images').remove([path]);
-      }
+      const p = extractStoragePath(imageUrl);
+      if (p) pathsToDelete.push(p);
+    }
+    if (images && images.length > 0) {
+      images.forEach((img) => {
+        const p = extractStoragePath(img);
+        if (p && !pathsToDelete.includes(p)) {
+          pathsToDelete.push(p);
+        }
+      });
+    }
+
+    if (pathsToDelete.length > 0) {
+      await supabase.storage.from('project-images').remove(pathsToDelete);
     }
 
     // Delete project (junction cascades)

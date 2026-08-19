@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, LayoutDashboard } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
 export default function Navbar() {
@@ -19,6 +19,11 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/#about" },
@@ -29,97 +34,126 @@ export default function Navbar() {
   ];
 
   return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-background/85 backdrop-blur-md border-b border-border py-4"
-          : "bg-transparent py-6"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <Link
-          href="/"
-          className="text-xl font-bold tracking-widest text-textPrimary hover:text-primary transition-colors flex items-center space-x-2"
-        >
-          <span>&lt;MAZEES/&gt;</span>
-        </Link>
+    <>
+      <nav
+        className={`fixed top-0 left-1/2 -translate-x-1/2 mt-4 w-[92%] sm:w-[90%] max-w-6xl z-50 transition-all duration-300 ${
+          isScrolled || mobileMenuOpen
+            ? "border border-white/10 bg-surface/90 backdrop-blur-2xl shadow-2xl shadow-black/40 rounded-2xl sm:rounded-full py-3 sm:py-4"
+            : "border border-border/60 bg-surface/50 backdrop-blur-xl rounded-2xl sm:rounded-full py-4"
+        }`}
+      >
+        <div className="px-6 sm:px-8 flex items-center justify-between">
+          <Link
+            href="/"
+            onClick={() => setMobileMenuOpen(false)}
+            className="text-lg sm:text-xl font-extrabold tracking-widest text-textPrimary hover:text-primary transition-colors flex items-center space-x-2"
+          >
+            <span className="text-primary font-mono">&lt;</span>
+            <span>MAZEES</span>
+            <span className="text-primary font-mono">/&gt;</span>
+          </Link>
 
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center space-x-6">
-          {navLinks.map((link) => {
-            const isActive =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href) && !link.href.includes("#");
+          {/* Desktop Nav */}
+          <div className="hidden md:flex items-center space-x-6">
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href) && !link.href.includes("#");
 
-            return (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`text-xs font-medium transition-colors ${
-                  isActive
-                    ? "text-primary"
-                    : "text-textSecondary hover:text-primary"
-                }`}
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`text-xs font-semibold tracking-wide transition-colors ${
+                    isActive
+                      ? "text-primary"
+                      : "text-textSecondary hover:text-primary"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
+
+            <div className="flex items-center space-x-2 pl-4 border-l border-border/60">
+              <a
+                href="https://github.com/Mazees"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 bg-primary hover:bg-primary-dark px-4 py-2 rounded-full text-xs font-bold text-white transition-all shadow-md shadow-primary/20 hover:scale-[1.03]"
               >
-                {link.name}
-              </Link>
-            );
-          })}
-
-          <div className="flex items-center space-x-2 pl-3 border-l border-border">
-            <a
-              href="https://github.com/Mazees"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center space-x-1.5 bg-primary hover:bg-primary-dark px-3.5 py-1.5 rounded-full text-xs font-medium text-white transition-all shadow-sm"
-            >
-              <FaGithub className="w-3.5 h-3.5" />
-              <span>GitHub</span>
-            </a>
+                <FaGithub className="w-4 h-4" />
+                <span>GitHub</span>
+              </a>
+            </div>
           </div>
+
+          {/* Mobile Toggle Button */}
+          <button
+            type="button"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            className="md:hidden p-2 rounded-xl bg-surface/80 border border-border text-textPrimary hover:text-primary transition-colors focus:outline-none"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5 text-primary" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </button>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-textPrimary p-1"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6 text-textPrimary" />
-          )}
-        </button>
-      </div>
+        {/* Mobile Nav Dropdown (Smooth seamless expansion inside floating card) */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-4 pt-4 px-6 pb-4 border-t border-border/60 flex flex-col space-y-1 animate-in fade-in slide-in-from-top-2 duration-200">
+            {navLinks.map((link) => {
+              const isActive =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href) && !link.href.includes("#");
 
-      {/* Mobile Nav */}
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center justify-between py-2 px-4 rounded-xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "text-textSecondary hover:text-textPrimary hover:bg-surface"
+                  }`}
+                >
+                  <span>{link.name}</span>
+                  {isActive && (
+                    <span className="w-2 h-2 rounded-full bg-primary" />
+                  )}
+                </Link>
+              );
+            })}
+
+            <div className="pt-4 mt-2 border-t border-border/60">
+              <a
+                href="https://github.com/Mazees"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white py-2.5 px-4 rounded-xl text-xs font-bold transition-all shadow-md shadow-primary/20"
+              >
+                <FaGithub className="w-4 h-4" />
+                <span>Visit GitHub Profile</span>
+              </a>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Mobile Backdrop Overlay (Click to dismiss) */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 w-full bg-surface/95 backdrop-blur-xl border-b border-border flex flex-col p-6 space-y-4 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-textSecondary hover:text-primary transition-colors text-base py-1"
-            >
-              {link.name}
-            </Link>
-          ))}
-
-          <div className="pt-4 border-t border-border flex flex-col gap-3">
-            <a
-              href="https://github.com/Mazees"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center space-x-2 bg-primary text-white py-2.5 rounded-xl text-sm font-medium"
-            >
-              <FaGithub className="w-4 h-4" />
-              <span>GitHub Profile</span>
-            </a>
-          </div>
-        </div>
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-in fade-in duration-200"
+        />
       )}
-    </nav>
+    </>
   );
 }

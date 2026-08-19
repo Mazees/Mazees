@@ -1,5 +1,7 @@
 import type { TechStack } from './techstack';
 
+export type ProjectType = 'client' | 'personal' | 'opensource';
+
 export type Project = {
   id: string;
   title: string;
@@ -7,8 +9,10 @@ export type Project = {
   description: string | null;
   long_description: string | null;
   image_url: string | null;
+  images: string[] | null;
   demo_url: string | null;
   repo_url: string | null;
+  project_type: ProjectType | null;
   is_featured: boolean;
   is_published: boolean;
   order_index: number;

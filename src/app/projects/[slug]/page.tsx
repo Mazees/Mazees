@@ -1,6 +1,6 @@
-import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
 import {
   ArrowLeft,
   Globe,
@@ -10,14 +10,18 @@ import {
   Calendar,
   Layers,
   Sparkles,
-} from 'lucide-react';
-import { FaGithub } from 'react-icons/fa';
-import { getProjectBySlug, getPublishedProjects } from '@/lib/supabase/projects';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
-import TechIcon from '@/components/TechIcon';
-import ProjectCard from '@/components/ProjectCard';
-import MarkdownRenderer from '@/components/MarkdownRenderer';
+} from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import {
+  getProjectBySlug,
+  getPublishedProjects,
+} from "@/lib/supabase/projects";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import TechIcon from "@/components/TechIcon";
+import ProjectCard from "@/components/ProjectCard";
+import ProjectGallery from "@/components/ProjectGallery";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
 interface ProjectDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -31,7 +35,7 @@ export async function generateMetadata({
 
   if (!project) {
     return {
-      title: 'Project Not Found — Mada Putra Adhadriyanto',
+      title: "Project Not Found — Mada Putra Adhadriyanto",
     };
   }
 
@@ -64,53 +68,49 @@ export default async function ProjectDetailPage({
     <main className="min-h-screen bg-background font-sans text-textPrimary flex flex-col justify-between">
       <Navbar />
 
-      <div className="pt-32 pb-24 flex-1">
+      <div className="pt-28 pb-24 flex-1">
         <div className="max-w-5xl mx-auto px-6">
-          {/* Breadcrumbs */}
-          <div className="flex items-center space-x-2 text-xs text-textSecondary mb-8">
-            <Link href="/" className="hover:text-primary transition-colors">
-              Home
-            </Link>
-            <span>/</span>
-            <Link href="/projects" className="hover:text-primary transition-colors">
-              Projects
-            </Link>
-            <span>/</span>
-            <span className="text-textPrimary font-medium truncate">
-              {project.title}
-            </span>
-          </div>
-
-          {/* Header */}
+          {/* Header Navigation & Badges */}
           <div className="space-y-6 mb-10">
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="/projects"
-                className="inline-flex items-center space-x-1.5 text-xs text-textSecondary hover:text-primary transition-colors px-3 py-1.5 rounded-lg bg-surface border border-border"
+                className="inline-flex items-center space-x-2 text-xs font-semibold text-textSecondary hover:text-primary transition-all px-4 py-2 rounded-xl bg-surface border border-border hover:border-primary/40 shadow-sm"
               >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <span>All Projects</span>
+                <ArrowLeft className="w-4 h-4" />
+                <span>Back to Projects</span>
               </Link>
 
+              {project.project_type === "client" && (
+                <span className="px-3 py-1 rounded-full bg-primary/10 text-primary-light border border-primary/30 text-xs font-semibold flex items-center space-x-2 shadow-sm">
+                  <span>Client Work</span>
+                </span>
+              )}
+              {project.project_type === "opensource" && (
+                <span className="px-3 py-1 rounded-full bg-surface text-textPrimary border border-border text-xs font-semibold flex items-center space-x-2 shadow-sm">
+                  <span>Open Source</span>
+                </span>
+              )}
+
               {project.is_featured && (
-                <span className="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs font-medium flex items-center space-x-1.5">
-                  <Star className="w-3.5 h-3.5 fill-yellow-400" />
+                <span className="px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-500/30 text-xs font-medium flex items-center space-x-2 shadow-sm">
+                  <Star className="w-4 h-4 fill-yellow-400" />
                   <span>Featured Project</span>
                 </span>
               )}
 
-              <span className="text-xs text-textSecondary flex items-center space-x-1.5 ml-auto">
-                <Calendar className="w-3.5 h-3.5" />
+              <span className="text-xs text-textSecondary font-mono flex items-center space-x-2 ml-auto">
+                <Calendar className="w-4 h-4" />
                 <span>
-                  {new Date(project.created_at).toLocaleDateString('en-US', {
-                    month: 'long',
-                    year: 'numeric',
+                  {new Date(project.created_at).toLocaleDateString("en-US", {
+                    month: "long",
+                    year: "numeric",
                   })}
                 </span>
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-bold text-textPrimary tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight">
               {project.title}
             </h1>
 
@@ -149,23 +149,12 @@ export default async function ProjectDetailPage({
             </div>
           </div>
 
-          {/* Cover Image */}
-          <div className="relative rounded-3xl overflow-hidden border border-border bg-surface mb-14 shadow-2xl">
-            {project.image_url ? (
-              <img
-                src={project.image_url}
-                alt={project.title}
-                className="w-full aspect-video object-cover"
-              />
-            ) : (
-              <div className="w-full aspect-video flex flex-col items-center justify-center bg-gradient-to-br from-surface to-background text-textSecondary">
-                <FolderKanban className="w-16 h-16 text-primary mb-3 opacity-60" />
-                <span className="text-sm font-mono text-textSecondary">
-                  {project.title}
-                </span>
-              </div>
-            )}
-          </div>
+          {/* Project Media Gallery (Multiple Screenshots) */}
+          <ProjectGallery
+            title={project.title}
+            coverImage={project.image_url}
+            images={project.images}
+          />
 
           {/* Tech Stack Breakdown */}
           {project.tech_stacks && project.tech_stacks.length > 0 && (
@@ -195,8 +184,8 @@ export default async function ProjectDetailPage({
                       style={{
                         backgroundColor: tech.color
                           ? `${tech.color}20`
-                          : 'rgba(249, 115, 22, 0.1)',
-                        color: tech.color || '#F97316',
+                          : "rgba(249, 115, 22, 0.1)",
+                        color: tech.color || "#F97316",
                       }}
                     >
                       <TechIcon
