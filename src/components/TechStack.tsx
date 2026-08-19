@@ -1,18 +1,29 @@
-import type { TechStack as TechStackType } from '@/types/techstack';
-import TechIcon from '@/components/TechIcon';
+import type { TechStack as TechStackType } from "@/types/techstack";
+import TechIcon from "@/components/TechIcon";
 
 const CATEGORY_TITLES: Record<string, string> = {
-  frontend: 'Frontend & UI',
-  backend: 'Backend & APIs',
-  ai: 'AI & Agentic Systems',
-  desktop: 'Desktop & Native',
-  infrastructure: 'Infrastructure & Cloud',
-  other: 'Other Tools & Libraries',
+  frontend: "Frontend & UI",
+  backend: "Backend & APIs",
+  ai: "AI & Agentic Systems",
+  desktop: "Desktop & Native",
+  infrastructure: "Infrastructure & Cloud",
+  other: "Other Tools & Libraries",
 };
 
-const CATEGORY_ORDER = ['frontend', 'backend', 'ai', 'desktop', 'infrastructure', 'other'];
+const CATEGORY_ORDER = [
+  "frontend",
+  "backend",
+  "ai",
+  "desktop",
+  "infrastructure",
+  "other",
+];
 
-export default function TechStack({ techStacks }: { techStacks: TechStackType[] }) {
+export default function TechStack({
+  techStacks,
+}: {
+  techStacks: TechStackType[];
+}) {
   const groupedCategories = CATEGORY_ORDER.map((catKey) => {
     const items = techStacks.filter((t) => t.category === catKey);
     return {
@@ -23,14 +34,17 @@ export default function TechStack({ techStacks }: { techStacks: TechStackType[] 
   }).filter((group) => group.skills.length > 0);
 
   return (
-    <section className="py-24 border-t border-border bg-surface/10" id="skills">
+    <section
+      className="pb-24 pt-28 border-t border-border bg-surface/10"
+      id="skills"
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
           <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
-            // Stack & Tools
+            // 04 · Stack & Tools
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight">
-            Tech Stack & Ecosystem
+            My Tech Stack & Tools
           </h2>
         </div>
 

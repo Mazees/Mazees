@@ -1,21 +1,25 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { Search, Filter, ArrowDownWideNarrow, GitFork } from 'lucide-react';
-import RepositoryCard from './RepositoryCard';
-import type { GitHubRepository } from '@/types/github';
+import { useState, useMemo } from "react";
+import { Search, Filter, ArrowDownWideNarrow, GitFork } from "lucide-react";
+import RepositoryCard from "./RepositoryCard";
+import type { GitHubRepository } from "@/types/github";
 
-export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[] }) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedLanguage, setSelectedLanguage] = useState('All');
-  const [sortBy, setSortBy] = useState('Recently Updated');
+export default function RepositoryExplorer({
+  repos,
+}: {
+  repos: GitHubRepository[];
+}) {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("All");
+  const [sortBy, setSortBy] = useState("Recently Updated");
 
   const languages = useMemo(() => {
     const langs = new Set<string>();
     repos.forEach((repo) => {
       if (repo.language) langs.add(repo.language);
     });
-    return ['All', ...Array.from(langs).sort()];
+    return ["All", ...Array.from(langs).sort()];
   }, [repos]);
 
   const filteredAndSortedRepos = useMemo(() => {
@@ -28,28 +32,33 @@ export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[
         (repo) =>
           repo.name.toLowerCase().includes(q) ||
           (repo.description && repo.description.toLowerCase().includes(q)) ||
-          (repo.topics && repo.topics.some((t) => t.toLowerCase().includes(q))) ||
-          (repo.language && repo.language.toLowerCase().includes(q))
+          (repo.topics &&
+            repo.topics.some((t) => t.toLowerCase().includes(q))) ||
+          (repo.language && repo.language.toLowerCase().includes(q)),
       );
     }
 
     // Filter by language
-    if (selectedLanguage !== 'All') {
+    if (selectedLanguage !== "All") {
       result = result.filter((repo) => repo.language === selectedLanguage);
     }
 
     // Sort
     return [...result].sort((a, b) => {
       switch (sortBy) {
-        case 'Recently Updated':
-          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-        case 'Recently Created':
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        case 'Most Stars':
+        case "Recently Updated":
+          return (
+            new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+          );
+        case "Recently Created":
+          return (
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
+        case "Most Stars":
           return b.stargazers_count - a.stargazers_count;
-        case 'Most Forks':
+        case "Most Forks":
           return b.forks_count - a.forks_count;
-        case 'Alphabetical':
+        case "Alphabetical":
           return a.name.localeCompare(b.name);
         default:
           return 0;
@@ -58,14 +67,16 @@ export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[
   }, [repos, searchQuery, selectedLanguage, sortBy]);
 
   return (
-    <section className="py-24 border-t border-border" id="repositories">
+    <section className="pb-24 pt-28 border-t border-border" id="repositories">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-12">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full border border-border bg-surface/50 text-xs text-primary mb-3">
             <GitFork className="w-3.5 h-3.5" />
             <span>Open Source</span>
           </div>
-          <h2 className="text-3xl font-bold text-textPrimary">Explore My Repository</h2>
+          <h2 className="text-3xl font-bold text-textPrimary">
+            Explore My Repository
+          </h2>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-4 mb-8">
@@ -94,7 +105,7 @@ export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[
               >
                 {languages.map((lang) => (
                   <option key={lang} value={lang}>
-                    {lang === 'All' ? 'All Languages' : lang}
+                    {lang === "All" ? "All Languages" : lang}
                   </option>
                 ))}
               </select>
@@ -120,7 +131,10 @@ export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[
         </div>
 
         <div className="flex justify-between items-center mb-6 text-xs text-textSecondary">
-          <div>Showing {filteredAndSortedRepos.length} of {repos.length} repositories</div>
+          <div>
+            Showing {filteredAndSortedRepos.length} of {repos.length}{" "}
+            repositories
+          </div>
         </div>
 
         {filteredAndSortedRepos.length > 0 ? (
@@ -136,8 +150,8 @@ export default function RepositoryExplorer({ repos }: { repos: GitHubRepository[
             </p>
             <button
               onClick={() => {
-                setSearchQuery('');
-                setSelectedLanguage('All');
+                setSearchQuery("");
+                setSelectedLanguage("All");
               }}
               className="mt-3 text-xs text-primary hover:underline font-medium"
             >

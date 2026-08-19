@@ -22,17 +22,17 @@ export default function RepositoriesPreview({
 
   return (
     <section
-      className="py-24 border-t border-border bg-surface/20"
+      className="pb-24 pt-28 border-t border-border bg-surface/20"
       id="repositories-preview"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
-              // Open Source
+              // 05 · Open Source
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight">
-              Recent Repositories
+              My Open-Source Repositories
             </h2>
           </div>
 
@@ -58,16 +58,6 @@ export default function RepositoriesPreview({
             </p>
           </div>
         )}
-
-        <div className="mt-8 text-center">
-          <Link
-            href="/repositories"
-            className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-surface hover:bg-border border border-border text-textPrimary hover:text-primary text-sm font-medium transition-all  not-lg:w-full"
-          >
-            <span>View All Repositories</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
       </div>
     </section>
   );

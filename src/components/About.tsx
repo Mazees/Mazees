@@ -27,27 +27,32 @@ export default function About() {
   ];
 
   return (
-    <section className="py-24 border-t border-border/80" id="about">
+    <section className="pb-24 pt-28 border-t border-border/80" id="about">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-12 gap-16 items-start">
           {/* Left Column: Background & Bio */}
           <div className="md:col-span-5 space-y-6">
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block">
-              // Background & Philosophy
+              // 01 · Who I Am
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-textPrimary tracking-tight leading-tight">
-              Building Ideas Into Software
+              About Me & Core Focus
             </h2>
             <div className="space-y-4 text-textSecondary text-base md:text-lg leading-relaxed font-normal">
               <p>
-                I&apos;m an Informatics student at UPN &ldquo;Veteran&rdquo; Jawa Timur who enjoys exploring and building things with technology. I&apos;m interested in web development, AI applications, and agentic systems, especially in finding ways to apply them to real-world problems and everyday life.
+                I&apos;m an Informatics student at UPN &ldquo;Veteran&rdquo;
+                Jawa Timur who enjoys exploring and building things with
+                technology. I&apos;m interested in web development, AI
+                applications, and agentic systems, especially in finding ways to
+                apply them to real-world problems and everyday life.
               </p>
               <p>
-                I&apos;m still learning and experimenting, but I enjoy turning what I learn into projects and seeing where an idea can go.
+                I&apos;m still learning and experimenting, but I enjoy turning
+                what I learn into projects and seeing where an idea can go.
               </p>
             </div>
           </div>
-          
+
           {/* Right Column: Core Focus Areas */}
           <div className="md:col-span-7 space-y-6">
             <span className="text-xs font-mono font-bold text-textSecondary tracking-widest uppercase block">
@@ -61,7 +66,9 @@ export default function About() {
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-textPrimary font-bold text-base">{focus.title}</h4>
+                      <h4 className="text-textPrimary font-bold text-base">
+                        {focus.title}
+                      </h4>
                       <span className="text-[11px] font-mono text-textSecondary/60 font-semibold">
                         0{index + 1}
                       </span>

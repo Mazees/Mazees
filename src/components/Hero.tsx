@@ -1,12 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Bot } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
 export default function Hero({ avatarUrl }: { avatarUrl?: string }) {
   const frontImage = "/profile_1.jpg";
   const backImage = "/profile_2.jpg";
+
+  const handleStartTour = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("start-mark-tour"));
+    }
+  };
 
   return (
     <section
@@ -29,7 +35,7 @@ export default function Hero({ avatarUrl }: { avatarUrl?: string }) {
               Mada Putra Adhadriyanto
             </h1>
             <h2 className="text-lg sm:text-2xl md:text-3xl text-primary font-bold tracking-tight">
-              Agentic AI Developer · Full-Stack Engineer
+              Agentic AI Explorer · Full-Stack Developer
             </h2>
           </div>
 
@@ -39,9 +45,17 @@ export default function Hero({ avatarUrl }: { avatarUrl?: string }) {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+            <button
+              type="button"
+              onClick={handleStartTour}
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/25 hover:scale-[1.02] group"
+            >
+              <Bot className="w-4 h-4 text-white group-hover:rotate-12 transition-transform" />
+              <span>Tour with Mark</span>
+            </button>
             <a
               href="#projects-preview"
-              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-primary hover:bg-primary-dark text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]"
+              className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-surface hover:bg-border border border-border text-textPrimary px-6 py-3 rounded-xl font-semibold transition-all hover:scale-[1.02]"
             >
               <span>View Projects</span>
               <ArrowRight className="w-4 h-4" />
@@ -53,7 +67,7 @@ export default function Hero({ avatarUrl }: { avatarUrl?: string }) {
               className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 bg-surface hover:bg-border border border-border text-textPrimary px-6 py-3 rounded-xl font-semibold transition-all hover:scale-[1.02]"
             >
               <FaGithub className="w-4 h-4" />
-              <span>GitHub Profile</span>
+              <span>GitHub</span>
             </a>
           </div>
         </motion.div>

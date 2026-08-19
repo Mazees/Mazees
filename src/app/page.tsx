@@ -1,17 +1,17 @@
-import { getGitHubProfile, getGitHubRepositories } from '@/lib/github';
-import { getPublishedProjects } from '@/lib/supabase/projects';
-import { getTechStacks } from '@/lib/supabase/techstack';
+import { getGitHubProfile, getGitHubRepositories } from "@/lib/github";
+import { getPublishedProjects } from "@/lib/supabase/projects";
+import { getTechStacks } from "@/lib/supabase/techstack";
 
-import Navbar from '@/components/Navbar';
-import Hero from '@/components/Hero';
-import About from '@/components/About';
-import ClientProjectsPreview from '@/components/ClientProjectsPreview';
-import ProjectsPreview from '@/components/ProjectsPreview';
-import RepositoriesPreview from '@/components/RepositoriesPreview';
-import TechStack from '@/components/TechStack';
-import GitHubStats from '@/components/GitHubStats';
-import Contact from '@/components/Contact';
-import Footer from '@/components/Footer';
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import About from "@/components/About";
+import ClientProjectsPreview from "@/components/ClientProjectsPreview";
+import ProjectsPreview from "@/components/ProjectsPreview";
+import RepositoriesPreview from "@/components/RepositoriesPreview";
+import TechStack from "@/components/TechStack";
+import Contact from "@/components/Contact";
+import Footer from "@/components/Footer";
+import InteractiveTour from "@/components/InteractiveTour";
 
 export const revalidate = 60;
 
@@ -30,10 +30,11 @@ export default async function Home() {
       <About />
       <ProjectsPreview projects={projects} />
       <ClientProjectsPreview projects={projects} />
+      <TechStack techStacks={techStacks} />
       <RepositoriesPreview repos={repos} />
-      <TechStack techStacks={techStacks} /> 
       <Contact />
       <Footer />
+      <InteractiveTour />
     </main>
   );
 }

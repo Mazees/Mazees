@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useMemo } from 'react';
-import { Search, Filter, FolderKanban } from 'lucide-react';
-import ProjectCard from './ProjectCard';
-import type { Project, ProjectType } from '@/types/project';
+import { useState, useMemo } from "react";
+import { Search, Filter, FolderKanban } from "lucide-react";
+import ProjectCard from "./ProjectCard";
+import type { Project, ProjectType } from "@/types/project";
 
-type FilterType = 'all' | 'client' | 'personal' | 'opensource';
+type FilterType = "all" | "client" | "personal" | "opensource";
 
 export default function ProjectShowcase({
   projects,
@@ -14,9 +14,9 @@ export default function ProjectShowcase({
   projects: Project[];
   isDedicatedPage?: boolean;
 }) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTech, setSelectedTech] = useState('All');
-  const [selectedType, setSelectedType] = useState<FilterType>('all');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTech, setSelectedTech] = useState("All");
+  const [selectedType, setSelectedType] = useState<FilterType>("all");
 
   // Extract all unique tech stack names present across projects
   const availableTechs = useMemo(() => {
@@ -26,16 +26,19 @@ export default function ProjectShowcase({
         if (t.name) techSet.add(t.name);
       });
     });
-    return ['All', ...Array.from(techSet).sort()];
+    return ["All", ...Array.from(techSet).sort()];
   }, [projects]);
 
   // Count items per project type
   const typeCounts = useMemo(() => {
     return {
       all: projects.length,
-      client: projects.filter((p) => p.project_type === 'client').length,
-      personal: projects.filter((p) => !p.project_type || p.project_type === 'personal').length,
-      opensource: projects.filter((p) => p.project_type === 'opensource').length,
+      client: projects.filter((p) => p.project_type === "client").length,
+      personal: projects.filter(
+        (p) => !p.project_type || p.project_type === "personal",
+      ).length,
+      opensource: projects.filter((p) => p.project_type === "opensource")
+        .length,
     };
   }, [projects]);
 
@@ -44,18 +47,21 @@ export default function ProjectShowcase({
       const q = searchQuery.toLowerCase();
       const matchesSearch =
         project.title.toLowerCase().includes(q) ||
-        (project.description && project.description.toLowerCase().includes(q)) ||
+        (project.description &&
+          project.description.toLowerCase().includes(q)) ||
         project.tech_stacks?.some((t) => t.name.toLowerCase().includes(q));
 
       const matchesTech =
-        selectedTech === 'All' ||
+        selectedTech === "All" ||
         project.tech_stacks?.some((t) => t.name === selectedTech);
 
       const matchesType =
-        selectedType === 'all' ||
-        (selectedType === 'client' && project.project_type === 'client') ||
-        (selectedType === 'opensource' && project.project_type === 'opensource') ||
-        (selectedType === 'personal' && (!project.project_type || project.project_type === 'personal'));
+        selectedType === "all" ||
+        (selectedType === "client" && project.project_type === "client") ||
+        (selectedType === "opensource" &&
+          project.project_type === "opensource") ||
+        (selectedType === "personal" &&
+          (!project.project_type || project.project_type === "personal"));
 
       return matchesSearch && matchesTech && matchesType;
     });
@@ -63,7 +69,7 @@ export default function ProjectShowcase({
 
   return (
     <section
-      className={`${isDedicatedPage ? 'pt-2 pb-16' : 'py-24 border-t border-border'}`}
+      className={`${isDedicatedPage ? "pt-2 pb-16" : "pb-24 pt-28 border-t border-border"}`}
       id="projects"
     >
       <div className="max-w-7xl mx-auto px-6">
@@ -79,12 +85,20 @@ export default function ProjectShowcase({
         {/* Project Type Filter Tabs */}
         <div className="flex flex-wrap items-center gap-2 mb-8 border-b border-border/80 pb-4">
           {[
-            { id: 'all', label: 'All Projects', count: typeCounts.all },
-            { id: 'client', label: 'Client Work', count: typeCounts.client },
-            { id: 'personal', label: 'Personal & AI Lab', count: typeCounts.personal },
-            { id: 'opensource', label: 'Open Source', count: typeCounts.opensource },
+            { id: "all", label: "All Projects", count: typeCounts.all },
+            { id: "client", label: "Client Work", count: typeCounts.client },
+            {
+              id: "personal",
+              label: "Personal & AI Lab",
+              count: typeCounts.personal,
+            },
+            {
+              id: "opensource",
+              label: "Open Source",
+              count: typeCounts.opensource,
+            },
           ].map((tab) => {
-            if (tab.id !== 'all' && tab.count === 0) return null;
+            if (tab.id !== "all" && tab.count === 0) return null;
             const isActive = selectedType === tab.id;
             return (
               <button
@@ -92,14 +106,16 @@ export default function ProjectShowcase({
                 onClick={() => setSelectedType(tab.id as FilterType)}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold flex items-center space-x-2 transition-all ${
                   isActive
-                    ? 'bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]'
-                    : 'bg-surface hover:bg-surface/80 border border-border text-textSecondary hover:text-textPrimary'
+                    ? "bg-primary text-white shadow-md shadow-primary/20 scale-[1.02]"
+                    : "bg-surface hover:bg-surface/80 border border-border text-textSecondary hover:text-textPrimary"
                 }`}
               >
                 <span>{tab.label}</span>
                 <span
                   className={`px-1.5 py-0.2 rounded-md text-[10px] font-mono ${
-                    isActive ? 'bg-black/20 text-white' : 'bg-background text-textSecondary'
+                    isActive
+                      ? "bg-black/20 text-white"
+                      : "bg-background text-textSecondary"
                   }`}
                 >
                   {tab.count}
@@ -136,7 +152,7 @@ export default function ProjectShowcase({
               >
                 {availableTechs.map((tech) => (
                   <option key={tech} value={tech}>
-                    {tech === 'All' ? 'All Tech Stacks' : tech}
+                    {tech === "All" ? "All Tech Stacks" : tech}
                   </option>
                 ))}
               </select>
@@ -156,15 +172,15 @@ export default function ProjectShowcase({
             <FolderKanban className="w-10 h-10 text-textSecondary mx-auto mb-3 opacity-40" />
             <p className="text-sm text-textSecondary">
               {projects.length === 0
-                ? 'No projects in showcase yet.'
-                : 'No projects found matching your search or filters.'}
+                ? "No projects in showcase yet."
+                : "No projects found matching your search or filters."}
             </p>
-            {searchQuery || selectedTech !== 'All' || selectedType !== 'all' ? (
+            {searchQuery || selectedTech !== "All" || selectedType !== "all" ? (
               <button
                 onClick={() => {
-                  setSearchQuery('');
-                  setSelectedTech('All');
-                  setSelectedType('all');
+                  setSearchQuery("");
+                  setSelectedTech("All");
+                  setSelectedType("all");
                 }}
                 className="mt-3 text-xs text-primary hover:underline font-semibold"
               >

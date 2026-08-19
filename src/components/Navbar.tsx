@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Bot } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
 export default function Navbar() {
@@ -23,6 +23,13 @@ export default function Navbar() {
   useEffect(() => {
     setMobileMenuOpen(false);
   }, [pathname]);
+
+  const handleStartTour = () => {
+    setMobileMenuOpen(false);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("start-mark-tour"));
+    }
+  };
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -76,7 +83,17 @@ export default function Navbar() {
               );
             })}
 
-            <div className="flex items-center space-x-2 pl-4 border-l border-border/60">
+            <div className="flex items-center space-x-3 pl-4 border-l border-border/60">
+              <button
+                type="button"
+                onClick={handleStartTour}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-surface hover:bg-border border border-primary/30 text-textPrimary hover:text-primary text-xs font-semibold transition-all hover:scale-[1.02]"
+                title="Guided tour with Mark"
+              >
+                <Bot className="w-3.5 h-3.5 text-primary" />
+                <span>Tour</span>
+              </button>
+
               <a
                 href="https://github.com/Mazees"
                 target="_blank"

@@ -2,23 +2,26 @@ const areas = [
   {
     tag: "AI & ML",
     title: "AI Applications & Automation",
-    description: "LLM-powered applications, AI assistants, agentic workflows, and automated reasoning pipelines.",
+    description:
+      "LLM-powered applications, AI assistants, agentic workflows, and automated reasoning pipelines.",
   },
   {
     tag: "Full-Stack",
     title: "Web Applications & Platforms",
-    description: "Modern, high-performance web applications using React, Next.js, TypeScript, and modern backend architectures.",
+    description:
+      "Modern, high-performance web applications using React, Next.js, TypeScript, and modern backend architectures.",
   },
   {
     tag: "Software",
     title: "Developer & Desktop Tools",
-    description: "Cross-platform desktop software, CLI utilities, and developer productivity tools.",
+    description:
+      "Cross-platform desktop software, CLI utilities, and developer productivity tools.",
   },
 ];
 
 export default function WhatIBuild() {
   return (
-    <section className="py-24 border-t border-border/80">
+    <section className="pb-24 pt-28 border-t border-border/80">
       <div className="max-w-7xl mx-auto px-6">
         <div className="mb-14">
           <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
@@ -31,7 +34,7 @@ export default function WhatIBuild() {
             Areas of engineering expertise, AI systems, and software categories.
           </p>
         </div>
-        
+
         <div className="grid md:grid-cols-3 gap-6">
           {areas.map((area, index) => (
             <div

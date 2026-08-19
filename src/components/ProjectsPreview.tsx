@@ -1,23 +1,24 @@
-import Link from 'next/link';
-import { ArrowRight, FolderKanban, Sparkles } from 'lucide-react';
-import ProjectCard from './ProjectCard';
-import type { Project } from '@/types/project';
+import Link from "next/link";
+import { ArrowRight, FolderKanban, Sparkles } from "lucide-react";
+import ProjectCard from "./ProjectCard";
+import type { Project } from "@/types/project";
 
 export default function ProjectsPreview({ projects }: { projects: Project[] }) {
-  const displayProjects = projects
-    .filter((p) => p.is_featured)
-    .slice(0, 6);
+  const displayProjects = projects.filter((p) => p.is_featured).slice(0, 6);
 
   return (
-    <section className="py-24 border-t border-border" id="projects-preview">
+    <section
+      className="pb-24 pt-28 border-t border-border"
+      id="projects-preview"
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
-              // Showcase
+              // 02 · Highlights & AI Lab
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight">
-              Featured Projects
+              My Featured Projects
             </h2>
           </div>
 

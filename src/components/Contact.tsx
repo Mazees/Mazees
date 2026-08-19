@@ -3,13 +3,22 @@ import { FaGithub, FaInstagram } from "react-icons/fa";
 
 export default function Contact() {
   return (
-    <section className="py-24 border-t border-border bg-surface/50" id="contact">
+    <section
+      className="pb-24 pt-28 border-t border-border bg-surface/50"
+      id="contact"
+    >
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <h2 className="text-4xl font-bold text-textPrimary mb-6">Let's Build Something</h2>
-        <p className="text-xl text-textSecondary mb-10 max-w-2xl mx-auto">
-          Have an idea, project, or something interesting to build? Let's connect.
+        <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
+          // 06 · Connect & Collaborate
+        </span>
+        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight mb-4">
+          Let&apos;s Build Something Together
+        </h2>
+        <p className="text-base sm:text-lg text-textSecondary mb-8 max-w-xl mx-auto font-normal">
+          Have an idea, a project, or looking to discuss engineering
+          opportunities? Let&apos;s connect.
         </p>
-        
+
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href="https://github.com/Mazees"

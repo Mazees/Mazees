@@ -1,7 +1,7 @@
-import Link from 'next/link';
-import { ArrowRight, Briefcase } from 'lucide-react';
-import ProjectCard from './ProjectCard';
-import type { Project } from '@/types/project';
+import Link from "next/link";
+import { ArrowRight, Briefcase } from "lucide-react";
+import ProjectCard from "./ProjectCard";
+import type { Project } from "@/types/project";
 
 export default function ClientProjectsPreview({
   projects,
@@ -9,19 +9,22 @@ export default function ClientProjectsPreview({
   projects: Project[];
 }) {
   const clientProjects = projects
-    .filter((p) => p.project_type === 'client')
+    .filter((p) => p.project_type === "client")
     .slice(0, 6);
 
   return (
-    <section className="py-24 border-t border-border" id="client-projects">
+    <section
+      className="pb-24 pt-28 border-t border-border"
+      id="client-projects"
+    >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div>
             <span className="text-xs font-mono font-bold text-primary tracking-widest uppercase block mb-3">
-              // Commercial Work
+              // 03 · Commercial Work
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-textPrimary tracking-tight">
-              Client Projects
+              My Client Projects
             </h2>
           </div>
 
