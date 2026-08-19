@@ -66,3 +66,28 @@ export async function deleteTechStackAction(id: string) {
     return { success: false, error: (err as Error).message || 'Failed to delete tech stack' };
   }
 }
+
+export async function reorderTechStacksAction(orderedIds: string[]) {
+  try {
+    const supabase = await createClient();
+
+    const updates = orderedIds.map((id, index) =>
+      supabase
+        .from('tech_stacks')
+        .update({ order_index: index })
+        .eq('id', id)
+    );
+
+    await Promise.all(updates);
+
+    revalidatePath('/', 'layout');
+    revalidatePath('/dashboard/techstack');
+    return { success: true };
+  } catch (err: unknown) {
+    return {
+      success: false,
+      error: (err as Error).message || 'Failed to reorder tech stack',
+    };
+  }
+}
+

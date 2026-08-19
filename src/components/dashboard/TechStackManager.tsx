@@ -11,7 +11,10 @@ import {
   X,
   Sparkles,
   ExternalLink,
+  GripVertical,
+  ArrowUpDown,
 } from "lucide-react";
+import { Reorder } from "framer-motion";
 import type {
   TechStack,
   TechStackCategory,
@@ -21,6 +24,7 @@ import {
   createTechStackAction,
   updateTechStackAction,
   deleteTechStackAction,
+  reorderTechStacksAction,
 } from "@/lib/actions/techstack";
 import TechIcon from "@/components/TechIcon";
 
@@ -78,6 +82,8 @@ export default function TechStackManager({
   const [editingItem, setEditingItem] = useState<TechStack | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+
   // Form states
   const [formName, setFormName] = useState("");
   const [formIcon, setFormIcon] = useState("");
@@ -85,7 +91,6 @@ export default function TechStackManager({
     useState<TechStackCategory>("frontend");
   const [formColor, setFormColor] = useState("#F97316");
   const [formIconUrl, setFormIconUrl] = useState("");
-  const [formOrder, setFormOrder] = useState<number>(0);
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -96,7 +101,6 @@ export default function TechStackManager({
     setFormCategory("frontend");
     setFormColor("#F97316");
     setFormIconUrl("");
-    setFormOrder(techStacks.length + 1);
     setFormError(null);
     setModalOpen(true);
   }
@@ -108,10 +112,56 @@ export default function TechStackManager({
     setFormCategory(item.category);
     setFormColor(item.color || "#F97316");
     setFormIconUrl(item.icon_url || "");
-    setFormOrder(item.order_index);
     setFormError(null);
     setModalOpen(true);
   }
+
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", `${index}`);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+
+  const handleDrop = async (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === targetIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    const newOrder = [...techStacks];
+    const [movedItem] = newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, movedItem);
+
+    setTechStacks(newOrder);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+
+    setIsSavingOrder(true);
+    const orderedIds = newOrder.map((t) => t.id);
+    const res = await reorderTechStacksAction(orderedIds);
+    if (!res.success) {
+      alert(res.error || "Failed to update tech stack order");
+    }
+    setIsSavingOrder(false);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -129,7 +179,7 @@ export default function TechStackManager({
       category: formCategory,
       color: formColor || null,
       icon_url: formIconUrl.trim() || null,
-      order_index: Number(formOrder) || 0,
+      order_index: editingItem ? editingItem.order_index : techStacks.length + 1,
     };
 
     if (editingItem) {
@@ -167,6 +217,8 @@ export default function TechStackManager({
     setSubmitting(false);
   }
 
+  const isDragEnabled = selectedCategory === "all" && search.trim() === "";
+
   const filtered = techStacks.filter((item) => {
     const matchesSearch = item.name
       .toLowerCase()
@@ -176,18 +228,129 @@ export default function TechStackManager({
     return matchesSearch && matchesCat;
   });
 
+  const renderTechCard = (
+    item: TechStack,
+    index: number,
+    canDrag = false
+  ) => {
+    const isDragging = draggedIndex === index;
+    const isDragOver = dragOverIndex === index && draggedIndex !== index;
+
+    return (
+      <div
+        draggable={canDrag}
+        onDragStart={(e) => canDrag && handleDragStart(e, index)}
+        onDragOver={(e) => canDrag && handleDragOver(e, index)}
+        onDrop={(e) => canDrag && handleDrop(e, index)}
+        onDragEnd={handleDragEnd}
+        className={`p-4 rounded-2xl bg-surface border transition-all duration-150 flex flex-col justify-between group h-full select-none ${
+          isDragging
+            ? "opacity-30 scale-95 border-dashed border-primary"
+            : isDragOver
+            ? "border-primary ring-2 ring-primary/40 bg-primary/5 scale-[1.02] shadow-lg"
+            : "border-border hover:border-primary/40"
+        } ${canDrag ? "cursor-grab active:cursor-grabbing" : ""}`}
+      >
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div className="flex items-center space-x-3 min-w-0">
+            {canDrag && (
+              <div
+                className="p-1 rounded-lg text-textSecondary/40 group-hover:text-textSecondary transition-colors shrink-0"
+                title="Drag anywhere to reorder"
+              >
+                <GripVertical className="w-4 h-4" />
+              </div>
+            )}
+
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/10"
+              style={{
+                backgroundColor: item.color
+                  ? `${item.color}20`
+                  : "rgba(249, 115, 22, 0.1)",
+                color: item.color || "#F97316",
+              }}
+            >
+              <TechIcon
+                name={item.name}
+                icon={item.icon}
+                iconUrl={item.icon_url}
+                color={item.color}
+                className="w-5 h-5"
+              />
+            </div>
+            <div className="min-w-0">
+              <h4 className="text-sm font-semibold text-textPrimary truncate">
+                {item.name}
+              </h4>
+              <span className="text-[11px] text-textSecondary uppercase tracking-wider block">
+                {item.category}
+              </span>
+            </div>
+          </div>
+
+          <div
+            className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => openEditModal(item)}
+              className="p-1.5 rounded-lg text-textSecondary hover:text-textPrimary hover:bg-background transition-colors"
+              title="Edit"
+            >
+              <Edit2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setDeleteConfirmId(item.id)}
+              className="p-1.5 rounded-lg text-textSecondary hover:text-red-400 hover:bg-red-500/10 transition-colors"
+              title="Delete"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between pt-2 border-t border-border/50 text-[11px] text-textSecondary">
+          <span className="font-mono text-[10px] text-textSecondary/70 truncate max-w-[130px]">
+            {item.icon ? item.icon : `order: ${item.order_index}`}
+          </span>
+          {item.color && (
+            <div className="flex items-center space-x-1.5 shrink-0">
+              <span
+                className="w-2.5 h-2.5 rounded-full border border-border"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="font-mono text-[10px]">{item.color}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Header & Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-textPrimary">Tech Stack</h2>
-          <p className="text-xs text-textSecondary mt-1">
-            Manage technologies with 31+ React Icons packages supported (Si*,
-            Fa*, Tb*, Di*, Ri*, Bi*, Lu*, etc.)
+          <div className="flex items-center space-x-3">
+            <h2 className="text-2xl font-bold text-textPrimary">Tech Stack</h2>
+            {isSavingOrder && (
+              <span className="px-2.5 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono text-[11px] flex items-center space-x-1.5">
+                <Loader2 className="w-3 h-3 animate-spin" />
+                <span>Saving order...</span>
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-textSecondary mt-1 flex items-center space-x-1.5">
+            <ArrowUpDown className="w-3.5 h-3.5 text-primary" />
+            <span>Drag cards anywhere (left, right, up, down) to reorder priority.</span>
           </p>
         </div>
         <button
+          type="button"
           onClick={openCreateModal}
           className="inline-flex items-center space-x-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-primary/20 shrink-0"
         >
@@ -211,6 +374,7 @@ export default function TechStackManager({
 
         <div className="flex overflow-x-auto pb-1 sm:pb-0 gap-1.5 scrollbar-none">
           <button
+            type="button"
             onClick={() => setSelectedCategory("all")}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
               selectedCategory === "all"
@@ -227,6 +391,7 @@ export default function TechStackManager({
             return (
               <button
                 key={cat.value}
+                type="button"
                 onClick={() => setSelectedCategory(cat.value)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                   selectedCategory === cat.value
@@ -251,72 +416,9 @@ export default function TechStackManager({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filtered.map((item) => (
-            <div
-              key={item.id}
-              className="p-4 rounded-2xl bg-surface border border-border hover:border-primary/40 transition-all flex flex-col justify-between group"
-            >
-              <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="flex items-center space-x-3 min-w-0">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/10"
-                    style={{
-                      backgroundColor: item.color
-                        ? `${item.color}20`
-                        : "rgba(249, 115, 22, 0.1)",
-                      color: item.color || "#F97316",
-                    }}
-                  >
-                    <TechIcon
-                      name={item.name}
-                      icon={item.icon}
-                      iconUrl={item.icon_url}
-                      color={item.color}
-                      className="w-5 h-5"
-                    />
-                  </div>
-                  <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-textPrimary truncate">
-                      {item.name}
-                    </h4>
-                    <span className="text-[11px] text-textSecondary uppercase tracking-wider block">
-                      {item.category}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => openEditModal(item)}
-                    className="p-1.5 rounded-lg text-textSecondary hover:text-textPrimary hover:bg-background transition-colors"
-                    title="Edit"
-                  >
-                    <Edit2 className="w-3.5 h-3.5" />
-                  </button>
-                  <button
-                    onClick={() => setDeleteConfirmId(item.id)}
-                    className="p-1.5 rounded-lg text-textSecondary hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between pt-2 border-t border-border/50 text-[11px] text-textSecondary">
-                <span className="font-mono text-[10px] text-textSecondary/70 truncate max-w-[130px]">
-                  {item.icon ? item.icon : `order: ${item.order_index}`}
-                </span>
-                {item.color && (
-                  <div className="flex items-center space-x-1.5 shrink-0">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full border border-border"
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="font-mono text-[10px]">{item.color}</span>
-                  </div>
-                )}
-              </div>
+          {filtered.map((item, index) => (
+            <div key={item.id}>
+              {renderTechCard(item, index, isDragEnabled)}
             </div>
           ))}
         </div>
@@ -494,18 +596,6 @@ export default function TechStackManager({
                   value={formIconUrl}
                   onChange={(e) => setFormIconUrl(e.target.value)}
                   className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-xs text-textPrimary placeholder:text-textSecondary/50 focus:outline-none focus:border-primary transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-textSecondary mb-1.5 uppercase tracking-wider">
-                  Display Order
-                </label>
-                <input
-                  type="number"
-                  value={formOrder}
-                  onChange={(e) => setFormOrder(Number(e.target.value))}
-                  className="w-full px-3.5 py-2 bg-background border border-border rounded-xl text-sm text-textPrimary focus:outline-none focus:border-primary transition-all"
                 />
               </div>
 
