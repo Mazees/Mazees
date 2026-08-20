@@ -2,11 +2,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { X, Sparkles, RotateCcw } from "lucide-react";
+import { ReActAgent } from "react-agent-js";
+import { llmProviderAction } from "@/lib/actions/agent-actions";
+import { clientAgentTools } from "@/lib/agent/client-tools";
+import { MARK_SYSTEM_PROMPT } from "@/lib/agent/prompt";
 import OrbVisualizer from "./OrbVisualizer";
 import ResponseArea from "./ResponseArea";
 import InputBar from "./InputBar";
 import ProcessPanel, { AgentProcess } from "./ProcessPanel";
-import { AgentStep, ChatMessage } from "@/lib/agent/engine";
+import { AgentStep, ChatMessage } from "@/lib/agent/types";
 
 const SUGGESTED_PROMPTS = [
   "What AI projects has Mada built?",
@@ -20,6 +24,7 @@ export default function MarkAgentOverlay() {
   const [status, setStatus] = useState<
     "idle" | "thinking" | "speaking" | "error"
   >("idle");
+
   const [response, setResponse] = useState<string>(
     "Hello! I'm Mark, Mada's personal AI Assistant. Feel free to ask me anything about Mada's projects, tech stack, open-source repositories, or contact channels.",
   );
@@ -29,6 +34,39 @@ export default function MarkAgentOverlay() {
   const [history, setHistory] = useState<ChatMessage[]>([]);
   const [activeTask, setActiveTask] = useState<string>("");
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Inisialisasi ReActAgent pada client-side dengan useRef
+  const agentRef = useRef<ReActAgent | null>(null);
+
+  useEffect(() => {
+    const initialHistory = history.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
+    const wrappedLlmProvider = async (msgs: any[]) => {
+      if (abortControllerRef.current?.signal.aborted) {
+        throw new Error("ABORTED_BY_USER");
+      }
+
+      const abortPromise = new Promise<any>((_, reject) => {
+        const signal = abortControllerRef.current?.signal;
+        if (signal?.aborted) return reject(new Error("ABORTED_BY_USER"));
+        signal?.addEventListener("abort", () => {
+          reject(new Error("ABORTED_BY_USER"));
+        });
+      });
+
+      return await Promise.race([llmProviderAction(msgs), abortPromise]);
+    };
+
+    agentRef.current = new ReActAgent(
+      wrappedLlmProvider,
+      clientAgentTools,
+      MARK_SYSTEM_PROMPT,
+      initialHistory,
+    );
+  }, [history]);
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
@@ -48,27 +86,13 @@ export default function MarkAgentOverlay() {
   }, [isOpen]);
 
   const handleSubmit = async (promptText: string) => {
-    if (!promptText.trim()) return;
+    if (!promptText.trim() || !agentRef.current) return;
 
     const processId = `proc-${Date.now()}`;
     setStatus("thinking");
     setActiveTask("Analyzing Query...");
     setSteps([]);
-
-    // Initialize active planning process
-    setProcesses([
-      {
-        id: processId,
-        type: "planning",
-        status: "active",
-        data: {
-          steps: [{ task: "Memproses Query", query: promptText }],
-          currentStep: 0,
-          reasoning:
-            "Menjalankan ReAct agent loop untuk menentukan tools yang dibutuhkan...",
-        },
-      },
-    ]);
+    setProcesses([]); // Jangan munculkan card placeholder sebelum tool dijalankan
 
     const updatedHistory: ChatMessage[] = [
       ...history,
@@ -76,101 +100,155 @@ export default function MarkAgentOverlay() {
     ];
     setHistory(updatedHistory);
 
-    // Abort previous in-flight requests if any
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
     abortControllerRef.current = new AbortController();
 
+    const localSteps: Array<{ task: string; query?: string }> = [];
+    let localThought = "";
+    let currentStepIndex = 0;
+
     try {
-      const res = await fetch("/api/agent/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt: promptText,
-          history: updatedHistory,
-        }),
-        signal: abortControllerRef.current.signal,
+      const abortPromise = new Promise<any>((_, reject) => {
+        const signal = abortControllerRef.current?.signal;
+        if (signal?.aborted) return reject(new Error("ABORTED_BY_USER"));
+        signal?.addEventListener("abort", () => {
+          reject(new Error("ABORTED_BY_USER"));
+        });
       });
 
-      const data = await res.json();
+      // Jalankan ReAct Loop langsung di Client dan dengarkan setiap status real-time
+      const runPromise = agentRef.current.run(promptText, (stepData: any) => {
+        if (abortControllerRef.current?.signal.aborted) return;
 
-      if (data.success) {
-        setResponse(data.text);
-        setResponseType(data.type || "short");
-        setSteps(data.steps || []);
-        setStatus("speaking");
+        // 1. Saat AI mengambil keputusan / thought
+        if (stepData.status === "decision" && stepData.decision) {
+          if (stepData.decision.thought) {
+            localThought = stepData.decision.thought;
+          }
+          if (stepData.decision.action && stepData.decision.action.tool) {
+            const toolName = stepData.decision.action.tool;
+            const toolQuery =
+              typeof stepData.decision.action.query === "object"
+                ? JSON.stringify(stepData.decision.action.query)
+                : String(stepData.decision.action.query || "");
 
-        const rawSteps: AgentStep[] = data.steps || [];
-        const toolCalls = rawSteps.filter((s) => s.type === "tool_call");
-        const thoughtSteps = rawSteps.filter((s) => s.type === "thought");
+            localSteps.push({ task: toolName, query: toolQuery });
+            currentStepIndex = localSteps.length - 1;
 
-        // Real steps: directly list the tools executed by the agent
-        const realToolSteps =
-          toolCalls.length > 0
-            ? toolCalls.map((t) => ({
-                task: t.name || "Tool",
-                query:
-                  typeof t.input === "object"
-                    ? JSON.stringify(t.input)
-                    : String(t.input || ""),
-              }))
-            : [
-                {
-                  task: "Direct Response (No Tools Needed)",
-                  query: promptText,
+            setProcesses([
+              {
+                id: processId,
+                type: "planning",
+                status: "active",
+                data: {
+                  steps: [...localSteps],
+                  currentStep: currentStepIndex,
+                  reasoning: localThought,
                 },
-              ];
+              },
+            ]);
+          }
+        }
+        // 2. Saat Tool sedang aktif dieksekusi
+        else if (stepData.status === "executing_tool") {
+          const toolName = stepData.tool || "Tool";
+          const toolQuery =
+            typeof stepData.query === "object"
+              ? JSON.stringify(stepData.query)
+              : String(stepData.query || "");
 
-        const combinedReasoning =
-          thoughtSteps
-            .map((t) => t.text)
-            .filter(Boolean)
-            .join("\n\n") || "ReAct agent loop selesai.";
+          const existing = localSteps.find(
+            (s) => s.task === toolName && s.query === toolQuery,
+          );
+          if (!existing) {
+            localSteps.push({ task: toolName, query: toolQuery });
+          }
+          currentStepIndex = localSteps.length - 1;
 
+          setProcesses([
+            {
+              id: processId,
+              type: "planning",
+              status: "active",
+              data: {
+                steps: [...localSteps],
+                currentStep: currentStepIndex,
+                reasoning: localThought,
+              },
+            },
+          ]);
+        }
+        // 3. Saat Tool selesai dieksekusi (observation) -> beri centang
+        else if (stepData.status === "observation") {
+          currentStepIndex = localSteps.length;
+
+          setProcesses([
+            {
+              id: processId,
+              type: "planning",
+              status: "active",
+              data: {
+                steps: [...localSteps],
+                currentStep: currentStepIndex,
+                reasoning: localThought,
+              },
+            },
+          ]);
+        }
+      });
+
+      const finalAnswer = await Promise.race([runPromise, abortPromise]);
+
+      if (abortControllerRef.current?.signal.aborted) {
+        return;
+      }
+
+      // 4. Selesai! Ubah ProcessPanel status menjadi 'done'
+      if (localSteps.length > 0) {
         setProcesses([
           {
             id: processId,
             type: "planning",
             status: "done",
             data: {
-              steps: realToolSteps,
-              currentStep: realToolSteps.length,
-              reasoning: combinedReasoning,
+              steps: [...localSteps],
+              currentStep: localSteps.length,
+              reasoning: localThought || "ReAct agent loop selesai.",
             },
           },
         ]);
-
-        setHistory((prev) => [
-          ...prev,
-          { role: "assistant", content: data.text },
-        ]);
-
-        setTimeout(() => {
-          setStatus("idle");
-        }, 1500);
       } else {
-        setResponse(
-          data.text ||
-            "I encountered an error retrieving data. Please try another query or contact Mada directly.",
-        );
-        setResponseType("short");
-        setStatus("error");
-        setProcesses((prev) =>
-          prev.map((p) =>
-            p.id === processId ? { ...p, status: "failed" } : p,
-          ),
-        );
+        setProcesses([]);
       }
+
+      const isLong =
+        typeof finalAnswer === "string" &&
+        (finalAnswer.length > 250 || finalAnswer.includes("\n\n"));
+
+      setResponse(finalAnswer || "Jawaban telah diproses.");
+      setResponseType(isLong ? "long" : "short");
+      setStatus("speaking");
+
+      setHistory((prev) => [
+        ...prev,
+        { role: "assistant", content: finalAnswer || "" },
+      ]);
+
+      setTimeout(() => {
+        setStatus("idle");
+      }, 1500);
     } catch (err: any) {
-      if (err.name === "AbortError") {
+      if (
+        err.message === "ABORTED_BY_USER" ||
+        abortControllerRef.current?.signal.aborted
+      ) {
         setResponse("Request was cancelled.");
         setStatus("idle");
         setProcesses([]);
         return;
       }
+      console.error("[Client ReActAgent error]:", err);
       setResponse(
-        "Connection error while contacting Mark engine. Please try again in a moment.",
+        "I encountered an issue processing your query. Please try again or reach out to Mada directly.",
       );
       setStatus("error");
       setProcesses((prev) =>
@@ -192,6 +270,9 @@ export default function MarkAgentOverlay() {
   };
 
   const handleResetChat = () => {
+    if (agentRef.current) {
+      agentRef.current.clearHistory();
+    }
     setHistory([]);
     setSteps([]);
     setProcesses([]);

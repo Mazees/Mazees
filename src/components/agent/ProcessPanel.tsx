@@ -1,8 +1,15 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { CheckCircle2, ListTree, Check, ChevronRight, Zap } from "lucide-react";
 import DraggableHoloCard from "./DraggableHoloCard";
+import {
+  FaCheckCircle,
+  FaSearch,
+  FaListUl,
+  FaBolt,
+  FaCheck,
+  FaChevronRight,
+} from "react-icons/fa";
 
 export interface AgentProcess {
   id: string;
@@ -30,8 +37,15 @@ export default function ProcessPanel({
 }: ProcessPanelProps) {
   const [renderedProcesses, setRenderedProcesses] = useState<AgentProcess[]>([]);
 
+  // Header global membedakan jumlah task yang sedang dieksekusi dari daftar step di dalam card
+  const executingTaskCount = processes.filter(
+    (process) => process.type === "planning" && process.status === "active"
+  ).length;
+
+  // Sync rendered processes with delayed unmount
   useEffect(() => {
     setRenderedProcesses((prev) => {
+      // Update existing or mark as exiting
       let next = prev.map((rp) => {
         const updated = processes.find((p) => p.id === rp.id);
         if (updated) return { ...updated, isExiting: false };
@@ -39,6 +53,7 @@ export default function ProcessPanel({
         return rp;
       });
 
+      // Add new ones
       processes.forEach((p) => {
         if (!prev.find((rp) => rp.id === p.id)) {
           next.push({ ...p, isExiting: false });
@@ -49,6 +64,7 @@ export default function ProcessPanel({
     });
   }, [processes]);
 
+  // Clean up exiting processes after animation
   useEffect(() => {
     const hasExiting = renderedProcesses.some((p) => p.isExiting);
     if (hasExiting) {
@@ -63,7 +79,7 @@ export default function ProcessPanel({
   useEffect(() => {
     processes.forEach((proc) => {
       if (proc.status === "done") {
-        const timeout = 4000;
+        const timeout = proc.type === "planning" ? 4000 : 5000;
         const timer = setTimeout(() => {
           onDismiss(proc.id);
         }, timeout);
@@ -77,13 +93,19 @@ export default function ProcessPanel({
   return (
     <div className="fixed inset-0 pointer-events-none z-40">
       {renderedProcesses.map((proc, index) => {
+        // Spawn all on the left side
         const cascadeY = index * 40;
-        const cascadeX = index * 20;
+        const cascadeX = index * 30;
 
         if (proc.type === "planning") {
           const { steps, currentStep = 0, reasoning } = proc.data;
           const isDone = proc.status === "done";
           const isFailed = proc.status === "failed";
+          const isPaused = proc.status === "paused";
+          const executionTitle =
+            executingTaskCount === 1
+              ? "Executing 1 Task"
+              : `Executing ${Math.max(executingTaskCount, 1)} Tasks`;
 
           return (
             <div className="pointer-events-auto" key={proc.id}>
@@ -91,34 +113,35 @@ export default function ProcessPanel({
                 id={proc.id}
                 title={
                   isDone ? (
-                    <span className="flex items-center space-x-1.5 text-emerald-400">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>Task Completed</span>
-                    </span>
+                    <>
+                      <FaCheckCircle className="inline mr-1 text-[#1fb854]" /> Task Completed
+                    </>
                   ) : isFailed ? (
-                    <span className="flex items-center space-x-1.5 text-red-400">
-                      <Zap className="w-3.5 h-3.5" />
-                      <span>Task Failed</span>
-                    </span>
+                    <>
+                      <FaBolt className="inline mr-1 text-red-400" /> Task Failed
+                    </>
+                  ) : isPaused ? (
+                    <>
+                      <FaBolt className="inline mr-1 text-amber-400" /> Task Paused
+                    </>
                   ) : (
-                    <span className="flex items-center space-x-1.5 text-emerald-400">
-                      <ListTree className="w-3.5 h-3.5" />
-                      <span>Executing Plan</span>
-                    </span>
+                    <>
+                      <FaListUl className="inline mr-1 text-[#1fb854]" /> {executionTitle}
+                    </>
                   )
                 }
-                defaultPosition={{ x: 30 + cascadeX, y: 80 + cascadeY }}
+                defaultPosition={{ x: 40 + cascadeX, y: 80 + cascadeY }}
                 onClose={() => onDismiss(proc.id)}
                 isVisible={!proc.isExiting}
               >
-                <div className="w-[300px] sm:w-[320px] flex flex-col gap-2">
+                <div className="w-[320px] flex flex-col gap-2">
                   {reasoning && (
                     <details className="group">
-                      <summary className="text-[10px] cursor-pointer select-none flex items-center space-x-1.5 text-textSecondary hover:text-emerald-400 transition-colors uppercase tracking-wider font-mono mb-2">
-                        <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
-                        <span>Proses Pemikiran</span>
+                      <summary className="text-[10px] cursor-pointer select-none flex items-center gap-1.5 opacity-50 hover:opacity-100 transition-opacity uppercase tracking-wider mb-2 text-white">
+                        <FaChevronRight className="group-open:rotate-90 transition-transform text-[8px]" />
+                        Proses Pemikiran
                       </summary>
-                      <div className="text-[11px] text-textSecondary border-l border-emerald-500/30 pl-2 mb-2 font-mono whitespace-pre-wrap leading-relaxed">
+                      <div className="text-[11px] opacity-60 border-l border-white/20 pl-2 mb-2 font-mono whitespace-pre-wrap text-white">
                         {reasoning}
                       </div>
                     </details>
@@ -126,49 +149,40 @@ export default function ProcessPanel({
 
                   {steps &&
                     steps.map((step, idx) => {
-                      const isStepCompleted = idx < currentStep || isDone;
-                      const isStepActive = idx === currentStep && !isDone;
+                      let prefix: React.ReactNode = `${idx + 1}.`;
+                      let opacity = "opacity-50 text-white";
+                      let suffix = "";
 
-                      const stepTitle =
-                        typeof step === "object" ? step.task : step;
-                      const stepQuery =
-                        typeof step === "object" ? step.query : undefined;
+                      if (idx < currentStep) {
+                        prefix = <FaCheck className="inline text-[#1fb854]" size={10} />;
+                        opacity = "opacity-100 text-[#1fb854] font-bold";
+                      } else if (idx === currentStep && !isDone) {
+                        opacity = "opacity-100 text-white animate-pulse";
+                        suffix = "...";
+                      }
 
                       return (
                         <div
                           key={idx}
-                          className={`flex items-start text-[11px] font-mono transition-all space-x-2 ${
-                            isStepCompleted
-                              ? "text-emerald-400 font-bold"
-                              : isStepActive
-                              ? "text-white animate-pulse"
-                              : "text-textSecondary/50"
-                          }`}
+                          className={`flex items-start text-[11px] font-mono transition-all ${opacity}`}
                         >
-                          <span className="w-4 shrink-0">
-                            {isStepCompleted ? (
-                              <Check className="w-3.5 h-3.5 inline text-emerald-400" />
-                            ) : (
-                              `${idx + 1}.`
-                            )}
-                          </span>
-
+                          <span className="w-4 inline-block">{prefix}</span>
                           <div className="flex-1">
-                            {stepQuery ? (
+                            {typeof step === "object" && step.query ? (
                               <details className="group/step outline-none">
-                                <summary className="cursor-pointer select-none flex items-center hover:opacity-80 outline-none list-none">
-                                  <ChevronRight className="w-2.5 h-2.5 group-open/step:rotate-90 transition-transform mr-1 text-emerald-400" />
-                                  <span>{stepTitle}</span>
+                                <summary className="cursor-pointer select-none flex items-center hover:opacity-80 outline-none list-none [&::-webkit-details-marker]:hidden">
+                                  <FaChevronRight className="group-open/step:rotate-90 transition-transform text-[8px] mr-1 opacity-50" />
+                                  {step.task} {suffix}
                                 </summary>
-                                <div className="mt-1 pl-2 text-[10px] border-l border-emerald-500/30 font-sans bg-background/60 p-1.5 rounded text-textSecondary">
-                                  {stepQuery}
+                                <div className="mt-1 pl-3 opacity-70 text-[9px] border-l border-white/20 ml-[3px] mb-1 break-words font-sans bg-white/[0.04] backdrop-blur-sm border border-white/5 p-1.5 rounded-none text-white">
+                                  {step.query}
                                 </div>
                               </details>
                             ) : (
-                              <span>
-                                {stepTitle}
-                                {isStepActive ? "..." : ""}
-                              </span>
+                              <>
+                                {typeof step === "object" ? step.task : step}
+                                {suffix}
+                              </>
                             )}
                           </div>
                         </div>
@@ -186,32 +200,23 @@ export default function ProcessPanel({
               <DraggableHoloCard
                 id={proc.id}
                 title={
-                  <span className="flex items-center space-x-1.5 text-emerald-400">
-                    <Zap className="w-3.5 h-3.5" />
-                    <span>Tool: {proc.data.action}</span>
-                  </span>
+                  <>
+                    <FaBolt className="inline mr-1 text-[#1fb854]" /> Plugin: {proc.data.action}
+                  </>
                 }
-                defaultPosition={{ x: 30 + cascadeX, y: 80 + cascadeY }}
+                defaultPosition={{ x: 40 + cascadeX, y: 80 + cascadeY }}
                 onClose={() => onDismiss(proc.id)}
                 isVisible={!proc.isExiting}
               >
-                <div className="w-[300px] sm:w-[320px] text-xs font-mono text-textPrimary">
-                  <div className="mb-2 text-textSecondary text-[11px]">
-                    Mengeksekusi Tool:{" "}
-                    <span className="text-emerald-400 font-semibold font-mono">
-                      {proc.data.action}
+                <div className="w-[280px] text-xs font-mono text-white/80">
+                  <div className="mb-2">
+                    Mengeksekusi:{" "}
+                    <span className="text-[#1fb854]">
+                      {proc.data.query || proc.data.action}
                     </span>
                   </div>
-
-                  {proc.data.query && (
-                    <div className="mb-2 p-2 bg-black/40 border border-emerald-500/20 rounded-md text-[11px] text-textSecondary">
-                      <span className="text-emerald-400/90 font-semibold">Query: </span>
-                      <span className="text-white font-mono">{proc.data.query}</span>
-                    </div>
-                  )}
-
                   {proc.data.result && (
-                    <div className="p-2.5 bg-emerald-950/40 text-emerald-300 border border-emerald-500/20 rounded-lg text-[10px] max-h-48 overflow-y-auto font-mono whitespace-pre-wrap leading-relaxed">
+                    <div className="p-2 bg-black/40 backdrop-blur-sm text-emerald-300 border border-emerald-500/20 rounded-none text-[10px] max-h-48 overflow-y-auto whitespace-pre-wrap">
                       {proc.data.result}
                     </div>
                   )}

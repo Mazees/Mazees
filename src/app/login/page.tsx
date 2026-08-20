@@ -1,9 +1,17 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { ArrowLeft, Lock, Mail, Eye, EyeOff, Loader2, Sparkles } from 'lucide-react';
-import { loginAction } from '@/lib/actions/auth';
+import { useState } from "react";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Lock,
+  Mail,
+  Eye,
+  EyeOff,
+  Loader2,
+  Sparkles,
+} from "lucide-react";
+import { loginAction } from "@/lib/actions/auth";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -73,7 +81,7 @@ export default function LoginPage() {
                   type="email"
                   name="email"
                   required
-                  placeholder="admin@mazees.dev"
+                  placeholder="admin@https://www.madaputra.my.id/"
                   className="w-full pl-10 pr-4 py-2.5 bg-background border border-border rounded-lg text-textPrimary placeholder:text-textSecondary/50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 />
               </div>
@@ -88,7 +96,7 @@ export default function LoginPage() {
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   required
                   placeholder="••••••••••••"
@@ -99,7 +107,11 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-textSecondary hover:text-textPrimary transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? (
+                    <EyeOff className="w-4 h-4" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>
