@@ -18,6 +18,9 @@
   --color-text-secondary: #a3a3a3;
 }
 
+@custom-variant hover (&:hover);
+@custom-variant focus (&:focus);
+
 button:hover {
   cursor: pointer;
 }

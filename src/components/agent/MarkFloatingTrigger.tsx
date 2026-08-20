@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bot, Sparkles } from "lucide-react";
+import { Bot } from "lucide-react";
 
 export default function MarkFloatingTrigger() {
   const handleOpen = () => {
@@ -15,23 +15,11 @@ export default function MarkFloatingTrigger() {
       <button
         type="button"
         onClick={handleOpen}
-        className="flex items-center space-x-3 px-4 py-2.5 rounded-xl bg-surface hover:bg-surface/90 border border-border hover:border-emerald-500/50 text-textPrimary shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
-        title="Ask Mark AI Agent"
+        className="w-13 h-13 p-3.5 flex items-center justify-center bg-emerald-500 hover:bg-emerald-400 text-white shadow-xl shadow-emerald-500/35 transition-all duration-200 hover:scale-110 active:scale-95 cursor-pointer rounded-full"
+        title="Open Mark AI Copilot"
+        aria-label="Open Mark AI Copilot"
       >
-        <img
-          src="/mark-icon.svg"
-          alt="Mark"
-          className="size-7 object-contain"
-        />
-
-        <div className="text-left">
-          <span className="text-xs font-semibold block leading-tight text-textPrimary group-hover:text-emerald-400 transition-colors">
-            Ask Mark
-          </span>
-          <span className="text-[10px] font-mono text-emerald-400/80 block">
-            AI Assistant
-          </span>
-        </div>
+        <Bot className="w-6 h-6 text-white stroke-[2.2]" />
       </button>
     </div>
   );
