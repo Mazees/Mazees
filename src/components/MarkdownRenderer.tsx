@@ -1,8 +1,14 @@
-'use client';
-
-import React from 'react';
+import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {
+  FaWhatsapp,
+  FaTelegramPlane,
+  FaEnvelope,
+  FaLinkedin,
+  FaGithub,
+  FaExternalLinkAlt,
+} from 'react-icons/fa';
 
 interface MarkdownRendererProps {
   content: string;
@@ -15,8 +21,6 @@ export default function MarkdownRenderer({
   className = "",
   variant = "default",
 }: MarkdownRendererProps) {
-  if (!content) return null;
-
   const isEmerald = variant === "emerald";
   const markerClass = isEmerald ? "marker:text-emerald-400" : "marker:text-primary";
   const borderQuoteClass = isEmerald ? "border-emerald-500" : "border-primary";
@@ -24,6 +28,17 @@ export default function MarkdownRenderer({
   const linkClass = isEmerald
     ? "text-emerald-400 hover:text-emerald-300 underline decoration-emerald-400/40 underline-offset-2 transition-colors font-medium"
     : "text-primary hover:text-primary-light underline decoration-primary/40 underline-offset-2 transition-colors font-medium";
+
+  const processedContent = useMemo(() => {
+    if (!content) return "";
+    // Turn naked emails into mailto links if they are not already in a markdown link
+    return content.replace(
+      /(?<!\[[^\]]*\]\()(?<!mailto:)\b([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b/g,
+      "[Kirim Email ($1)](mailto:$1)"
+    );
+  }, [content]);
+
+  if (!content) return null;
 
   return (
     <div
@@ -94,7 +109,7 @@ export default function MarkdownRenderer({
             if (isInline) {
               return (
                 <code
-                  className={`px-1.5 py-0.5 rounded-md bg-surface border border-border ${codeInlineClass} font-mono text-xs`}
+                  className={`px-1.5 py-0.5 rounded-none bg-surface border border-border ${codeInlineClass} font-mono text-xs`}
                   {...props}
                 >
                   {children}
@@ -103,7 +118,7 @@ export default function MarkdownRenderer({
             }
             return (
               <code
-                className="block p-4 rounded-xl bg-surface border border-border text-textPrimary font-mono text-xs overflow-x-auto my-4"
+                className="block p-4 rounded-none bg-surface border border-border text-textPrimary font-mono text-xs overflow-x-auto my-4"
                 {...props}
               >
                 {children}
@@ -111,10 +126,10 @@ export default function MarkdownRenderer({
             );
           },
           pre: ({ node, ...props }) => (
-            <pre className="overflow-x-auto rounded-xl my-4" {...props} />
+            <pre className="overflow-x-auto rounded-none my-4" {...props} />
           ),
           table: ({ node, ...props }) => (
-            <div className="overflow-x-auto my-6 border border-border rounded-xl">
+            <div className="overflow-x-auto my-6 border border-border rounded-none">
               <table
                 className="w-full text-left text-xs border-collapse divide-y divide-border"
                 {...props}
@@ -139,26 +154,116 @@ export default function MarkdownRenderer({
               {...props}
             />
           ),
-          a: ({ node, ...props }) => (
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              className={linkClass}
-              {...props}
-            />
-          ),
+          a: ({ node, href, children, ...props }: any) => {
+            const linkUrl = String(href || "");
+            const isWa = linkUrl.includes("wa.me") || linkUrl.includes("whatsapp");
+            const isTele = linkUrl.includes("t.me") || linkUrl.includes("telegram");
+            const isMail = linkUrl.startsWith("mailto:") || linkUrl.includes("@gmail.com");
+            const isLinkedIn = linkUrl.includes("linkedin.com");
+            const isGitHub = linkUrl.includes("github.com");
+
+            const label = typeof children === "string" ? children : "";
+            const isRawUrl = label.startsWith("http://") || label.startsWith("https://") || label.startsWith("mailto:");
+
+            if (isWa) {
+              return (
+                <a
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-emerald-950/60 hover:bg-emerald-900/80 border border-emerald-500/40 text-emerald-400 text-xs font-mono font-medium transition-all shadow-[0_0_12px_rgba(31,184,84,0.15)] hover:shadow-[0_0_16px_rgba(31,184,84,0.3)] my-1 mr-2 no-underline"
+                  {...props}
+                >
+                  <FaWhatsapp className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                  <span>{!isRawUrl && label ? label : "Hubungi via WhatsApp"}</span>
+                </a>
+              );
+            }
+
+            if (isTele) {
+              return (
+                <a
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-sky-950/60 hover:bg-sky-900/80 border border-sky-500/40 text-sky-400 text-xs font-mono font-medium transition-all shadow-[0_0_12px_rgba(14,165,233,0.15)] hover:shadow-[0_0_16px_rgba(14,165,233,0.3)] my-1 mr-2 no-underline"
+                  {...props}
+                >
+                  <FaTelegramPlane className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                  <span>{!isRawUrl && label ? label : "Chat via Telegram"}</span>
+                </a>
+              );
+            }
+
+            if (isMail) {
+              return (
+                <a
+                  href={linkUrl.startsWith("mailto:") ? linkUrl : `mailto:${linkUrl}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-rose-950/60 hover:bg-rose-900/80 border border-rose-500/40 text-rose-400 text-xs font-mono font-medium transition-all shadow-[0_0_12px_rgba(244,63,94,0.15)] hover:shadow-[0_0_16px_rgba(244,63,94,0.3)] my-1 mr-2 no-underline"
+                  {...props}
+                >
+                  <FaEnvelope className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                  <span>{!isRawUrl && label ? label : "Kirim Email"}</span>
+                </a>
+              );
+            }
+
+            if (isLinkedIn) {
+              return (
+                <a
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-blue-950/60 hover:bg-blue-900/80 border border-blue-500/40 text-blue-400 text-xs font-mono font-medium transition-all shadow-[0_0_12px_rgba(59,130,246,0.15)] hover:shadow-[0_0_16px_rgba(59,130,246,0.3)] my-1 mr-2 no-underline"
+                  {...props}
+                >
+                  <FaLinkedin className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                  <span>{!isRawUrl && label ? label : "LinkedIn Profile"}</span>
+                </a>
+              );
+            }
+
+            if (isGitHub) {
+              return (
+                <a
+                  href={linkUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-none bg-white/5 hover:bg-white/10 border border-white/20 text-white text-xs font-mono font-medium transition-all my-1 mr-2 no-underline"
+                  {...props}
+                >
+                  <FaGithub className="w-3.5 h-3.5 shrink-0" />
+                  <span>{children}</span>
+                </a>
+              );
+            }
+
+            return (
+              <a
+                href={linkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClass}
+                {...props}
+              >
+                {children}
+              </a>
+            );
+          },
           hr: ({ node, ...props }) => (
             <hr className="my-8 border-border" {...props} />
           ),
           img: ({ node, ...props }) => (
             <img
-              className="rounded-2xl border border-border my-6 max-h-[450px] w-full object-cover shadow-lg"
+              className="rounded-none border border-border my-6 max-h-[450px] w-full object-cover shadow-lg"
               {...props}
             />
           ),
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );

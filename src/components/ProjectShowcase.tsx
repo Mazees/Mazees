@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Filter, FolderKanban } from "lucide-react";
 import ProjectCard from "./ProjectCard";
 import type { Project, ProjectType } from "@/types/project";
@@ -17,6 +17,24 @@ export default function ProjectShowcase({
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTech, setSelectedTech] = useState("All");
   const [selectedType, setSelectedType] = useState<FilterType>("all");
+
+  useEffect(() => {
+    const handleMarkFilter = (e: Event) => {
+      const customEvent = e as CustomEvent<{ query?: string }>;
+      if (customEvent.detail?.query) {
+        const q = customEvent.detail.query.toLowerCase();
+        if (q === "client" || q === "personal" || q === "opensource" || q === "all") {
+          setSelectedType(q as FilterType);
+        } else {
+          setSearchQuery(customEvent.detail.query);
+        }
+      }
+    };
+    window.addEventListener("mark-filter-projects", handleMarkFilter);
+    return () => {
+      window.removeEventListener("mark-filter-projects", handleMarkFilter);
+    };
+  }, []);
 
   // Extract all unique tech stack names present across projects
   const availableTechs = useMemo(() => {

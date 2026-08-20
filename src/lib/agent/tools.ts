@@ -305,6 +305,86 @@ export async function executeTool(name: string, args: Record<string, any> = {}):
       };
     }
 
+    case "compose_contact_message": {
+      const topic = args.topic || rawQuery || "Collaboration Inquiry";
+      const details = args.details || "";
+      const name = args.name || "Guest";
+
+      const formattedMsg = `Halo Mada, saya ${name}. Saya tertarik untuk berdiskusi mengenai: ${topic}.${details ? ` Detail: ${details}` : ""}`;
+      const encodedMsg = encodeURIComponent(formattedMsg);
+
+      return {
+        status: "drafted",
+        subject: topic,
+        message_preview: formattedMsg,
+        whatsapp_link: `https://wa.me/6281234489008?text=${encodedMsg}`,
+        telegram_link: "https://t.me/mazeesid",
+        email_link: `mailto:madaadha21@gmail.com?subject=${encodeURIComponent(topic)}&body=${encodedMsg}`,
+      };
+    }
+
+    case "analyze_project_fit": {
+      const stacks = await getTechStacks();
+      const projects = await getPublishedProjects();
+
+      return {
+        user_requirements: args.requirements || rawQuery || "",
+        available_tech_stacks: stacks.map((s) => ({
+          name: s.name,
+          category: s.category,
+        })),
+        reference_projects: projects.slice(0, 5).map((p) => ({
+          title: p.title,
+          slug: p.slug,
+          description: p.description,
+          tech_stacks: p.tech_stacks?.map((t) => t.name),
+        })),
+        instruction:
+          "Analyze the user's requirements against Mada's tech stacks from the database. Formulate your architectural evaluation, compatibility rating, recommended stack, and relevant projects directly in your final response.",
+      };
+    }
+
+    case "get_live_github_activity": {
+      try {
+        const res = await fetch(
+          "https://api.github.com/users/Mazees/events/public?per_page=5",
+          {
+            headers: {
+              Accept: "application/vnd.github.v3+json",
+              "User-Agent": "Mazees-Portfolio",
+              ...(process.env.GITHUB_TOKEN
+                ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
+                : {}),
+            },
+            next: { revalidate: 60 },
+          }
+        );
+        if (!res.ok) {
+          return {
+            message: "GitHub activity currently cached or unavailable.",
+            username: "Mazees",
+          };
+        }
+        const events = await res.json();
+        return {
+          username: "Mazees",
+          recent_events_count: Array.isArray(events) ? events.length : 0,
+          latest_events: Array.isArray(events)
+            ? events.map((e: any) => ({
+                type: e.type,
+                repo: e.repo?.name,
+                created_at: e.created_at,
+                summary: e.payload?.commits
+                  ? `${e.payload.commits.length} commits pushed`
+                  : e.type,
+              }))
+            : [],
+        };
+      } catch (err: any) {
+        return { message: "Unable to fetch live GitHub events.", error: err.message };
+      }
+    }
+
     default:
       return { error: `Tool '${name}' is not recognized.` };
   }

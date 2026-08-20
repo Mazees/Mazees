@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { X, Sparkles, RotateCcw } from "lucide-react";
 import { ReActAgent } from "react-agent-js";
 import { llmProviderAction } from "@/lib/actions/agent-actions";
@@ -20,6 +21,7 @@ const SUGGESTED_PROMPTS = [
 ];
 
 export default function MarkAgentOverlay() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [status, setStatus] = useState<
     "idle" | "thinking" | "speaking" | "error"
@@ -79,11 +81,20 @@ export default function MarkAgentOverlay() {
     };
     window.addEventListener("keydown", handleKeyDown);
 
+    const handleNavigate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ path: string }>;
+      if (customEvent.detail?.path) {
+        router.push(customEvent.detail.path);
+      }
+    };
+    window.addEventListener("mark-navigate", handleNavigate);
+
     return () => {
       window.removeEventListener("open-mark-chat", handleOpen);
       window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("mark-navigate", handleNavigate);
     };
-  }, [isOpen]);
+  }, [isOpen, router]);
 
   const handleSubmit = async (promptText: string) => {
     if (!promptText.trim() || !agentRef.current) return;
